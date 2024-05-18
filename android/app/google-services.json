@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "1086981033213",
+    "project_id": "learnspacefirebase",
+    "storage_bucket": "learnspacefirebase.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1086981033213:android:2908455e99db22f1fa8294",
+        "android_client_info": {
+          "package_name": "com.example.learnspace"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1086981033213-hhgdvl5h0mabv1393iepd62a95b039go.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBs2Z5_887O4BvkfHtRT6C2Ne-y0bmTcpY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1086981033213-hhgdvl5h0mabv1393iepd62a95b039go.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1086981033213-4u5n27j1vq7q2qu1g2iigoiqa8du9fpn.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.learnspace"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,34 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "learnspacefirebase",
+          "appId": "1:1086981033213:android:2908455e99db22f1fa8294",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "learnspacefirebase",
+          "configurations": {
+            "android": "1:1086981033213:android:2908455e99db22f1fa8294",
+            "ios": "1:1086981033213:ios:850549c3ab8c95b7fa8294",
+            "macos": "1:1086981033213:ios:850549c3ab8c95b7fa8294",
+            "web": "1:1086981033213:web:f8bc2daef8aa26f6fa8294",
+            "windows": "1:1086981033213:web:da78f95b84c8e7edfa8294"
+          }
+        }
+      }
+    }
+  },
+  "emulators": {
+    "auth": {
+      "port": 9099
+    },
+    "ui": {
+      "enabled": true
+    },
+    "singleProjectMode": true
+  }
+}
