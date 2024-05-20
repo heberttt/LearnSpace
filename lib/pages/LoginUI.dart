@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:learnspace/pages/CreateAccount.dart';
 
 class LoginUIModel extends FlutterFlowModel<LoginUIWidget> {
   ///  State fields for stateful widgets in this page.
@@ -97,7 +98,7 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
                   Container(
                     width: 100,
                     height: 15,
-                    decoration: BoxDecoration(),
+                    decoration: const BoxDecoration(),
                   ),
                   Row(
                     mainAxisSize: MainAxisSize.max,
@@ -120,7 +121,7 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
                       Container(
                         width: 100,
                         height: 30,
-                        decoration: BoxDecoration(),
+                        decoration: const BoxDecoration(),
                       ),
                     ],
                   ),
@@ -130,8 +131,9 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
                     children: [
                       Expanded(
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(25, 0, 25, 0),
-                          child: Container(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
+                              25, 0, 25, 0),
+                          child: SizedBox(
                             width: double.infinity,
                             child: TextFormField(
                               controller: _model.textController1,
@@ -181,8 +183,9 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
                                   ),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                contentPadding: EdgeInsetsDirectional.fromSTEB(
-                                    15, 0, 15, 0),
+                                contentPadding:
+                                    const EdgeInsetsDirectional.fromSTEB(
+                                        15, 0, 15, 0),
                               ),
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
@@ -205,7 +208,7 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
                       Container(
                         width: 100,
                         height: 30,
-                        decoration: BoxDecoration(),
+                        decoration: const BoxDecoration(),
                       ),
                     ],
                   ),
@@ -215,8 +218,9 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
                     children: [
                       Expanded(
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(25, 0, 25, 0),
-                          child: Container(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
+                              25, 0, 25, 0),
+                          child: SizedBox(
                             width: double.infinity,
                             child: TextFormField(
                               obscureText: true,
@@ -266,8 +270,9 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
                                   ),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                contentPadding: EdgeInsetsDirectional.fromSTEB(
-                                    15, 0, 15, 0),
+                                contentPadding:
+                                    const EdgeInsetsDirectional.fromSTEB(
+                                        15, 0, 15, 0),
                               ),
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
@@ -290,7 +295,7 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
                       Container(
                         width: 100,
                         height: 50,
-                        decoration: BoxDecoration(),
+                        decoration: const BoxDecoration(),
                       ),
                     ],
                   ),
@@ -303,7 +308,7 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
                         onTap: () {},
                         child: Container(
                           child: Align(
-                            alignment: AlignmentDirectional(0, 0),
+                            alignment: const AlignmentDirectional(0, 0),
                             child: FFButtonWidget(
                               onPressed: () {
                                 print('Button pressed ...');
@@ -312,10 +317,11 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
                               options: FFButtonOptions(
                                 width: 300,
                                 height: 40,
-                                padding:
-                                    EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                    0, 0, 0, 0),
                                 iconPadding:
-                                    EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                                    const EdgeInsetsDirectional.fromSTEB(
+                                        0, 0, 0, 0),
                                 color: FlutterFlowTheme.of(context).primary,
                                 textStyle: FlutterFlowTheme.of(context)
                                     .titleSmall
@@ -325,7 +331,7 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
                                       letterSpacing: 0,
                                     ),
                                 elevation: 3,
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   color: Colors.transparent,
                                   width: 1,
                                 ),
@@ -343,10 +349,16 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
+                        padding:
+                            const EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
                         child: InkWell(
                           onTap: () {
-                            //bring to new account page
+                            print("Go to create new user");
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const CreateAccountWidget()),
+                            );
                           },
                           child: Container(
                             decoration: const BoxDecoration(
@@ -359,7 +371,7 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
                                   .bodyMedium
                                   .override(
                                     fontFamily: 'Manrope',
-                                    color: Color(0xFF6CA0EF),
+                                    color: const Color(0xFF6CA0EF),
                                     letterSpacing: 0,
                                     decoration: TextDecoration.underline,
                                   ),
@@ -372,7 +384,7 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
                   Opacity(
                     opacity: 0.3,
                     child: Padding(
-                      padding: EdgeInsets.fromLTRB(0, 25, 0, 10),
+                      padding: const EdgeInsets.fromLTRB(0, 25, 0, 10),
                       child: Divider(
                         height: 0,
                         thickness: 1,
@@ -383,7 +395,8 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
                   Opacity(
                     opacity: 0.5,
                     child: Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 20),
+                      padding:
+                          const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 20),
                       child: Text(
                         'or Sign in with:',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -428,20 +441,16 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
   }
 }
 
-
-signInWithGoogle() async{
-
-  GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();  
+signInWithGoogle() async {
+  GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
   GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
 
   AuthCredential credential = GoogleAuthProvider.credential(
-    accessToken: googleAuth?.accessToken,
-    idToken:  googleAuth?.idToken
-  );
+      accessToken: googleAuth?.accessToken, idToken: googleAuth?.idToken);
 
-  UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+  UserCredential userCredential =
+      await FirebaseAuth.instance.signInWithCredential(credential);
 
   print(userCredential.user?.displayName);
-  
 }
