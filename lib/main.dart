@@ -6,14 +6,11 @@ import 'firebase_options.dart';
 import 'pages/Home.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-await Firebase.initializeApp();
 
 // Ideal time to initialize
-await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
   
   runApp(const MaterialApp(
-    home: Home(),
+    home: LoginUIWidget(),
   ));
 
 await Firebase.initializeApp(

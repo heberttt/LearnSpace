@@ -2,7 +2,15 @@ import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_core/firebase_core.dart';
+import '../firebase_options.dart';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+final _firebase = FirebaseAuth.instance;
 
 class CreateAccountWidget extends StatefulWidget {
   const CreateAccountWidget({super.key});
@@ -14,7 +22,50 @@ class CreateAccountWidget extends StatefulWidget {
 class _CreateAccountWidgetState extends State<CreateAccountWidget> {
   late CreateAccountModel _model;
 
+  bool _isLoggingIn = false;
+
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  String registerBtnLoad() {
+    if (_isLoggingIn) {
+      return "Loading";
+    }
+    return "Register";
+  }
+
+  Future<void> _createAccountWithEmail(
+      String email, String username, String password) async {
+    try {
+      setState(() {
+        _isLoggingIn = true;
+      });
+      final credential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      await FirebaseFirestore.instance
+            .collection('users')
+            .doc(credential.user!.uid)
+            .set({
+          'username': username,
+          'email': email,
+          
+        });
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print('The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        print('The account already exists for that email.');
+      }
+    } catch (e) {
+      print(e);
+    }
+
+    setState(() {
+        _isLoggingIn = false;
+      });
+  }
 
   @override
   void initState() {
@@ -98,21 +149,23 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                           Text(
                             'Register to get',
                             textAlign: TextAlign.center,
-                            style:
-                                FlutterFlowTheme.of(context).titleLarge.override(
-                                      fontFamily: 'Outfit',
-                                      fontSize: 40,
-                                      letterSpacing: 0.5,
-                                    ),
+                            style: FlutterFlowTheme.of(context)
+                                .titleLarge
+                                .override(
+                                  fontFamily: 'Outfit',
+                                  fontSize: 40,
+                                  letterSpacing: 0.5,
+                                ),
                           ),
                           Text(
                             'started!',
-                            style:
-                                FlutterFlowTheme.of(context).titleLarge.override(
-                                      fontFamily: 'Outfit',
-                                      fontSize: 40,
-                                      letterSpacing: 0.5,
-                                    ),
+                            style: FlutterFlowTheme.of(context)
+                                .titleLarge
+                                .override(
+                                  fontFamily: 'Outfit',
+                                  fontSize: 40,
+                                  letterSpacing: 0.5,
+                                ),
                           ),
                         ],
                       ),
@@ -136,7 +189,7 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                               autofocus: true,
                               obscureText: false,
                               decoration: InputDecoration(
-                                labelText: 'Enter your username',
+                                labelText: 'Enter your email',
                                 labelStyle: FlutterFlowTheme.of(context)
                                     .labelMedium
                                     .override(
@@ -151,7 +204,8 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                                     ),
                                 enabledBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(
-                                    color: FlutterFlowTheme.of(context).alternate,
+                                    color:
+                                        FlutterFlowTheme.of(context).alternate,
                                     width: 2,
                                   ),
                                   borderRadius: BorderRadius.circular(8),
@@ -177,8 +231,8 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                                   ),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                contentPadding:
-                                    EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
+                                contentPadding: EdgeInsetsDirectional.fromSTEB(
+                                    15, 0, 15, 0),
                               ),
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
@@ -212,7 +266,7 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                               autofocus: true,
                               obscureText: false,
                               decoration: InputDecoration(
-                                labelText: 'Enter your full name',
+                                labelText: 'Enter your username',
                                 labelStyle: FlutterFlowTheme.of(context)
                                     .labelMedium
                                     .override(
@@ -227,7 +281,8 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                                     ),
                                 enabledBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(
-                                    color: FlutterFlowTheme.of(context).alternate,
+                                    color:
+                                        FlutterFlowTheme.of(context).alternate,
                                     width: 2,
                                   ),
                                   borderRadius: BorderRadius.circular(8),
@@ -253,8 +308,8 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                                   ),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                contentPadding:
-                                    EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
+                                contentPadding: EdgeInsetsDirectional.fromSTEB(
+                                    15, 0, 15, 0),
                               ),
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
@@ -286,7 +341,7 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                               controller: _model.textController3,
                               focusNode: _model.textFieldFocusNode3,
                               autofocus: true,
-                              obscureText: false,
+                              obscureText: true,
                               decoration: InputDecoration(
                                 labelText: 'Enter your password',
                                 labelStyle: FlutterFlowTheme.of(context)
@@ -303,7 +358,8 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                                     ),
                                 enabledBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(
-                                    color: FlutterFlowTheme.of(context).alternate,
+                                    color:
+                                        FlutterFlowTheme.of(context).alternate,
                                     width: 2,
                                   ),
                                   borderRadius: BorderRadius.circular(8),
@@ -329,8 +385,8 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                                   ),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                contentPadding:
-                                    EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
+                                contentPadding: EdgeInsetsDirectional.fromSTEB(
+                                    15, 0, 15, 0),
                               ),
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
@@ -347,7 +403,6 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                     ],
                   ),
                 ),
-                
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 40),
                   child: Row(
@@ -358,9 +413,12 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                         alignment: AlignmentDirectional(0, 0),
                         child: FFButtonWidget(
                           onPressed: () {
-                            print('Button pressed ...');
+                            _createAccountWithEmail(
+                                _model.textController1.text,
+                                _model.textController2.text,
+                                _model.textController3.text);
                           },
-                          text: 'Register',
+                          text: registerBtnLoad(),
                           options: FFButtonOptions(
                             width: 300,
                             height: 40,
@@ -368,12 +426,13 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                             iconPadding:
                                 EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                             color: FlutterFlowTheme.of(context).primary,
-                            textStyle:
-                                FlutterFlowTheme.of(context).titleSmall.override(
-                                      fontFamily: 'Manrope',
-                                      color: Colors.white,
-                                      letterSpacing: 0,
-                                    ),
+                            textStyle: FlutterFlowTheme.of(context)
+                                .titleSmall
+                                .override(
+                                  fontFamily: 'Manrope',
+                                  color: Colors.white,
+                                  letterSpacing: 0,
+                                ),
                             elevation: 3,
                             borderSide: BorderSide(
                               color: Colors.transparent,
@@ -415,8 +474,7 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                         "assets/images/Google_Logo.png",
                         height: 30,
                       ),
-                      onPressed: () {
-                      },
+                      onPressed: () {},
                     ),
                     const SizedBox(width: 45),
                     IconButton(

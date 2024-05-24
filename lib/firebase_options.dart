@@ -87,4 +87,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'learnspacefirebase.appspot.com',
     measurementId: 'G-QDT87NG801',
   );
+
 }

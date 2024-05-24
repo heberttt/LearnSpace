@@ -43,6 +43,24 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  bool _isSigningIn = false;
+
+  Future<void> _signInWithEmail(String email, String password) async {
+    try {
+      final userCredentials = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+    } catch (e) {
+      print("Somethig went wrong");
+    }
+  }
+
+  String _signInStatus() {
+    if (_isSigningIn) {
+      return "Loading...";
+    }
+    return "Sign In";
+  }
+
   @override
   void initState() {
     super.initState();
@@ -311,9 +329,14 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
                             alignment: const AlignmentDirectional(0, 0),
                             child: FFButtonWidget(
                               onPressed: () {
-                                print('Button pressed ...');
+                                String enteredEmail =
+                                    _model.textController1.text;
+                                String enteredPassword =
+                                    _model.textController2.text;
+
+                                _signInWithEmail(enteredEmail, enteredPassword);
                               },
-                              text: 'Sign In',
+                              text: _signInStatus(),
                               options: FFButtonOptions(
                                 width: 300,
                                 height: 40,
@@ -357,7 +380,8 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const CreateAccountWidget()),
+                                  builder: (context) =>
+                                      const CreateAccountWidget()),
                             );
                           },
                           child: Container(
@@ -416,7 +440,7 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
                           height: 30,
                         ),
                         onPressed: () {
-                          signInWithGoogle();
+                          //signInWithGoogle();
                         },
                       ),
                       const SizedBox(width: 45),
@@ -426,7 +450,15 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
                           height: 30,
                         ),
                         onPressed: () {
-                          print('IconButton pressed ...');
+                          print(FirebaseAuth.instance
+                              .authStateChanges()
+                              .listen((User? user) {
+                            if (user == null) {
+                              print('User is currently signed out!');
+                            } else {
+                              print('User is signed in!');
+                            }
+                          }));
                         },
                       ),
                     ],
@@ -441,16 +473,16 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
   }
 }
 
-signInWithGoogle() async {
-  GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+// signInWithGoogle() async {
+//   GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-  GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+//   GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
 
-  AuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken, idToken: googleAuth?.idToken);
+//   AuthCredential credential = GoogleAuthProvider.credential(
+//       accessToken: googleAuth?.accessToken, idToken: googleAuth?.idToken);
 
-  UserCredential userCredential =
-      await FirebaseAuth.instance.signInWithCredential(credential);
+//   UserCredential userCredential =
+//       await FirebaseAuth.instance.signInWithCredential(credential);
 
-  print(userCredential.user?.displayName);
-}
+//   print(userCredential.user?.displayName);
+// }
