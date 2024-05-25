@@ -53,7 +53,14 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   bool _isSigningIn = false;
+  bool _isGoingToCreateNewAccount = false;
 
+  String _getCreateNewUserText(){
+    if(_isGoingToCreateNewAccount){
+      return "Loading...";
+    }
+    return 'New user? Create account here';
+  }
   
 
   Future<void> _signInWithEmail(String email, String password) async {
@@ -403,13 +410,18 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
                             const EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
                         child: InkWell(
                           onTap: () {
-                            print("Go to create new user");
+                            setState(() {
+                              _isGoingToCreateNewAccount = true;
+                            });
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
                                       const CreateAccountWidget()),
                             );
+                            setState(() {
+                              _isGoingToCreateNewAccount = false;
+                            });
                           },
                           child: Container(
                             decoration: const BoxDecoration(
@@ -417,7 +429,7 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
                                   BorderRadius.all(Radius.circular(20)),
                             ),
                             child: Text(
-                              'New user? Create account here',
+                              _getCreateNewUserText(),
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(

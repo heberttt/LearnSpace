@@ -3,6 +3,8 @@ import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:learnspace/pages/LoginUI.dart';
+import 'package:learnspace/pages/Profile.dart';
+import 'package:learnspace/widgets/SearchBar.dart';
 import 'package:provider/provider.dart';
 import '../Classes/User.dart';
 
@@ -43,7 +45,7 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     LearnSpaceUser _user = widget.user;
-    _widgetOptions = [MainWidget.getUser(_user), Text("hi")];
+    _widgetOptions = [MainWidget.getUser(_user), ProfileWidget.getUser(_user)];
   }
 
   @override
@@ -269,36 +271,9 @@ class _MainWidgetState extends State<MainWidget> {
                   children: [
                     Row(
                       mainAxisSize: MainAxisSize.max,
-                      children: [],
+                      children: [HomeSearchBar()],
                     ),
                   ],
-                ),
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
-                  child: FlutterFlowDropDown(
-                    options: [widget.user.email, 'Rule 2:'],
-                    onChanged: (val) =>
-                        setState(() => _model.dropDownValue = val),
-                    width: MediaQuery.sizeOf(context).width * 0.95,
-                    height: 30,
-                    textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Manrope',
-                          letterSpacing: 0,
-                        ),
-                    hintText: 'Rules...',
-                    icon: Icon(
-                      Icons.keyboard_arrow_down_rounded,
-                      color: FlutterFlowTheme.of(context).secondaryText,
-                      size: 24,
-                    ),
-                    fillColor: FlutterFlowTheme.of(context).secondaryBackground,
-                    elevation: 2,
-                    borderColor: FlutterFlowTheme.of(context).alternate,
-                    borderWidth: 2,
-                    borderRadius: 8,
-                    margin: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
-                    hidesUnderline: true,
-                  ),
                 ),
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
@@ -428,6 +403,41 @@ class _MainWidgetState extends State<MainWidget> {
                     ),
                   ),
                 ),
+                
+                Expanded(
+                  child: ListView(
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    scrollDirection: Axis.vertical,
+                    children: [
+                      Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+                  child: FlutterFlowDropDown(
+                    options: [widget.user.email, 'Rule 2:'],
+                    onChanged: (val) =>
+                        setState(() => _model.dropDownValue = val),
+                    width: MediaQuery.sizeOf(context).width * 0.95,
+                    height: 30,
+                    textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
+                          fontFamily: 'Manrope',
+                          letterSpacing: 0,
+                        ),
+                    hintText: 'Rules...',
+                    icon: Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      color: FlutterFlowTheme.of(context).secondaryText,
+                      size: 24,
+                    ),
+                    fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                    elevation: 2,
+                    borderColor: FlutterFlowTheme.of(context).alternate,
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    margin: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+                    hidesUnderline: true,
+                  ),
+                ),
+                
                 Row(
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -439,12 +449,6 @@ class _MainWidgetState extends State<MainWidget> {
                     ),
                   ],
                 ),
-                Expanded(
-                  child: ListView(
-                    padding: EdgeInsets.zero,
-                    shrinkWrap: true,
-                    scrollDirection: Axis.vertical,
-                    children: [
                       Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(3, 0, 3, 0),
                         child: QuestionCard(),
