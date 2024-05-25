@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -24,6 +26,8 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
 
   bool _isLoggingIn = false;
 
+  File? _selectedImage;
+
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   String registerBtnLoad() {
@@ -44,14 +48,16 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
         email: email,
         password: password,
       );
+
       await FirebaseFirestore.instance
-            .collection('users')
-            .doc(credential.user!.uid)
-            .set({
-          'username': username,
-          'email': email,
-          
-        });
+          .collection('users')
+          .doc(credential.user!.uid)
+          .set({
+        'username': username,
+        'email': email,
+        'profile_picture_url': 'https://firebasestorage.googleapis.com/v0/b/learnspacefirebase.appspot.com/o/user-profile.png?alt=media&token=59e8130d-c794-4125-a83e-22a7482bd81b',
+        'role' : 'student'
+      });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
@@ -63,8 +69,14 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
     }
 
     setState(() {
-        _isLoggingIn = false;
-      });
+      _isLoggingIn = false;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('New user "$username" created '),
+    ));
+
+    Navigator.pop(context);
   }
 
   @override

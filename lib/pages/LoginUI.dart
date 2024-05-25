@@ -1,8 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:learnspace/pages/CreateAccount.dart';
+import 'Home.dart';
+import '../Classes/User.dart';
 
 class LoginUIModel extends FlutterFlowModel<LoginUIWidget> {
   ///  State fields for stateful widgets in this page.
@@ -41,17 +45,39 @@ class LoginUIWidget extends StatefulWidget {
 class _LoginUIWidgetState extends State<LoginUIWidget> {
   late LoginUIModel _model;
 
+
+  void _signOut() {
+    FirebaseAuth.instance.signOut();
+  }
+
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   bool _isSigningIn = false;
 
+  
+
   Future<void> _signInWithEmail(String email, String password) async {
+    setState(() {
+      _isSigningIn = true;
+    });
     try {
       final userCredentials = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
+
+      print(userCredentials);
+      
+      
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Home.getUser2(FirebaseAuth.instance.currentUser!.uid)),
+      );
     } catch (e) {
-      print("Somethig went wrong");
+      print("Something went wrong");
     }
+    setState(() {
+      _isSigningIn = false;
+    });
   }
 
   String _signInStatus() {
@@ -71,6 +97,7 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
 
     _model.textController2 ??= TextEditingController();
     _model.textFieldFocusNode2 ??= FocusNode();
+    
   }
 
   @override
@@ -461,6 +488,8 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
                           }));
                         },
                       ),
+                      IconButton(
+                          onPressed: _signOut, icon: const Icon(Icons.favorite))
                     ],
                   ),
                 ],
