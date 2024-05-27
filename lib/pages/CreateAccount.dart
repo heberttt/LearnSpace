@@ -56,7 +56,8 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
         'username': username,
         'email': email,
         'profile_picture_url': 'https://firebasestorage.googleapis.com/v0/b/learnspacefirebase.appspot.com/o/user-profile.png?alt=media&token=59e8130d-c794-4125-a83e-22a7482bd81b',
-        'role' : 'student'
+        'role' : 'Student',
+        'point' : '0',
       });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {

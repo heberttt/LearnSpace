@@ -8,10 +8,12 @@ import 'package:firebase_storage/firebase_storage.dart';
 
 class LearnSpaceUser {
   String id = "";
-  String username = "";
+  String username = "late";
   String email = "";
   String role = "student";
   String profilePictureUrl = "";
+  int point = 0;
+  int approval = 0;
 
   LearnSpaceUser();
 
@@ -40,6 +42,31 @@ class LearnSpaceUser {
     setEmail(userDataMap['email']);
     setProfilePictureURL(userDataMap['profile_picture_url']);
     setRole(userDataMap['role']);
+    setPoint(int.parse(userDataMap['point']));
+  }
+
+  Future<void> updateUsername(String newName) async {
+    final db = FirebaseFirestore.instance;
+    final storageRef = FirebaseStorage.instance.ref();
+    try {
+      final profilePictureURLRef = db.collection("users").doc(id);
+      await profilePictureURLRef.update({
+        "username":
+            newName
+      }).then((value) => print("DocumentSnapshot successfully updated!"),
+          onError: (e) => print("Error updating document $e"));
+    } catch (e) {
+      print(e);
+    }
+    setUsername(newName);
+  }
+
+  void setPoint(int point) {
+    this.point = point;
+  }
+
+  void setApproval(int approval) {
+    this.approval = approval;
   }
 
   void setProfilePictureURL(String url) {
@@ -50,8 +77,16 @@ class LearnSpaceUser {
     this.role = role;
   }
 
-  String getProfile(){
+  String getProfile() {
     return profilePictureUrl;
+  }
+
+  int getApproval() {
+    return approval;
+  }
+
+  int getPoint() {
+    return point;
   }
 
   Future<void> updateProfilePicture(File pickedImage) async {
@@ -61,14 +96,13 @@ class LearnSpaceUser {
     try {
       await mountainsRef.putFile(pickedImage);
       final profilePictureURLRef = db.collection("users").doc(id);
-      await profilePictureURLRef.update({"profile_picture_url": 'https://firebasestorage.googleapis.com/v0/b/learnspacefirebase.appspot.com/o/$id.jpg?alt=media'}).then(
-          (value) => print("DocumentSnapshot successfully updated!"),
+      await profilePictureURLRef.update({
+        "profile_picture_url":
+            'https://firebasestorage.googleapis.com/v0/b/learnspacefirebase.appspot.com/o/$id.jpg?alt=media'
+      }).then((value) => print("DocumentSnapshot successfully updated!"),
           onError: (e) => print("Error updating document $e"));
     } catch (e) {
       print(e);
     }
   }
-
-
-  
 }

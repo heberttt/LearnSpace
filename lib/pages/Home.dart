@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:learnspace/Classes/Question.dart';
 import 'package:learnspace/pages/LoginUI.dart';
 import 'package:learnspace/pages/Profile.dart';
+import 'package:learnspace/widgets/QuestionCard.dart';
 import 'package:learnspace/widgets/SearchBar.dart';
 import 'package:provider/provider.dart';
 import '../Classes/User.dart';
@@ -53,6 +56,18 @@ class _HomeState extends State<Home> {
     SKey = HomeScaffoldKey;
     return SafeArea(
       child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            print('FloatingActionButton pressed ...');
+          },
+          backgroundColor: FlutterFlowTheme.of(context).primary,
+          elevation: 8,
+          child: Icon(
+            Icons.add,
+            color: FlutterFlowTheme.of(context).info,
+            size: 24,
+          ),
+        ),
         key: SKey,
         body: _widgetOptions[_selectedIndex],
         drawer: Drawer(
@@ -205,10 +220,96 @@ class _MainWidgetState extends State<MainWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  List<QuestionCard> questionCards = [];
+
+  Future<List<QuestionCard>> getQuestionCards() async {
+    List<String> questionIDs = await getQuestionIDs();
+    List<QuestionCard> questionCards = [];
+
+    for (String questionID in questionIDs) {
+      Question question = Question(questionID);
+      await question.getOtherDataFromID();
+      QuestionCard questionCard = QuestionCard.getQuestion(question);
+      questionCards.add(questionCard);
+    }
+
+    return questionCards;
+  }
+
+  Future<List<String>> getQuestionIDs() async {
+    List<String> questionIDs = [];
+    try {
+      // Reference to your Firestore collection
+      CollectionReference collectionRef =
+          FirebaseFirestore.instance.collection('questions');
+
+      // Fetch all documents in the collection
+      QuerySnapshot querySnapshot = await collectionRef.get();
+
+      // Iterate through each document and add the document ID to the list
+      for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+        questionIDs.add(doc.id);
+      }
+    } catch (e) {
+      print("Error fetching document IDs: $e");
+    }
+    return questionIDs;
+  }
+
   @override
   void initState() {
+    _fetchQuestionCards();
     super.initState();
     _model = createModel(context, () => MainModel());
+  }
+
+  List<Widget> _listviewChildrens = [];
+
+  Future<void> _fetchQuestionCards() async {
+    questionCards = await getQuestionCards();
+    List<Widget> _listviewChildrens = [
+      Padding(
+        padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+        child: FlutterFlowDropDown(
+          options: [widget.user.email, 'Rule 2:'],
+          onChanged: (val) => setState(() => _model.dropDownValue = val),
+          width: MediaQuery.sizeOf(context).width * 0.95,
+          height: 30,
+          textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
+                fontFamily: 'Manrope',
+                letterSpacing: 0,
+              ),
+          hintText: 'Rules...',
+          icon: Icon(
+            Icons.keyboard_arrow_down_rounded,
+            color: FlutterFlowTheme.of(context).secondaryText,
+            size: 24,
+          ),
+          fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+          elevation: 2,
+          borderColor: FlutterFlowTheme.of(context).alternate,
+          borderWidth: 2,
+          borderRadius: 8,
+          margin: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+          hidesUnderline: true,
+        ),
+      ),
+      Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 100,
+            height: 30,
+            decoration: BoxDecoration(),
+          ),
+        ],
+      ),
+    ];
+    _listviewChildrens.addAll(questionCards);
+    setState(() {
+      this._listviewChildrens = _listviewChildrens;
+    });
   }
 
   @override
@@ -403,277 +504,18 @@ class _MainWidgetState extends State<MainWidget> {
                     ),
                   ),
                 ),
-                
                 Expanded(
                   child: ListView(
                     padding: EdgeInsets.zero,
                     shrinkWrap: true,
                     scrollDirection: Axis.vertical,
-                    children: [
-                      Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
-                  child: FlutterFlowDropDown(
-                    options: [widget.user.email, 'Rule 2:'],
-                    onChanged: (val) =>
-                        setState(() => _model.dropDownValue = val),
-                    width: MediaQuery.sizeOf(context).width * 0.95,
-                    height: 30,
-                    textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Manrope',
-                          letterSpacing: 0,
-                        ),
-                    hintText: 'Rules...',
-                    icon: Icon(
-                      Icons.keyboard_arrow_down_rounded,
-                      color: FlutterFlowTheme.of(context).secondaryText,
-                      size: 24,
-                    ),
-                    fillColor: FlutterFlowTheme.of(context).secondaryBackground,
-                    elevation: 2,
-                    borderColor: FlutterFlowTheme.of(context).alternate,
-                    borderWidth: 2,
-                    borderRadius: 8,
-                    margin: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
-                    hidesUnderline: true,
-                  ),
-                ),
-                
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 100,
-                      height: 30,
-                      decoration: BoxDecoration(),
-                    ),
-                  ],
-                ),
-                      Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(3, 0, 3, 0),
-                        child: QuestionCard(),
-                      ),
-                      Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(3, 0, 3, 0),
-                        child: QuestionCard(),
-                      ),
-                      Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(3, 0, 3, 0),
-                        child: QuestionCard(),
-                      ),
-                    ].divide(SizedBox(height: 20)),
+                    children: _listviewChildrens.divide(SizedBox(height: 20)),
                   ),
                 ),
               ],
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class QuestionCard extends StatefulWidget {
-  const QuestionCard({super.key});
-
-  @override
-  State<QuestionCard> createState() => _QuestionCardState();
-}
-
-class _QuestionCardState extends State<QuestionCard> {
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      clipBehavior: Clip.antiAliasWithSaveLayer,
-      color: FlutterFlowTheme.of(context).secondaryBackground,
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Opacity(
-                  opacity: 0.5,
-                  child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
-                    child: Text(
-                      '2 hours ago',
-                      textAlign: TextAlign.start,
-                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Manrope',
-                            letterSpacing: 0,
-                          ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
-                  child: Container(
-                    width: 70,
-                    height: 70,
-                    clipBehavior: Clip.antiAlias,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: Image.network(
-                      'https://firebasestorage.googleapis.com/v0/b/learnspacefirebase.appspot.com/o/user-profile.png?alt=media&token=59e8130d-c794-4125-a83e-22a7482bd81b',
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(30, 0, 0, 0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Username',
-                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Manrope',
-                              fontSize: 20,
-                              letterSpacing: 0,
-                              fontWeight: FontWeight.w800,
-                            ),
-                      ),
-                      Text(
-                        'Student',
-                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Manrope',
-                              letterSpacing: 0,
-                            ),
-                      ),
-                    ].divide(SizedBox(height: 5)),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Divider(
-            thickness: 1,
-            color: FlutterFlowTheme.of(context).accent4,
-          ),
-          Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: MediaQuery.sizeOf(context).width * 0.9,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    color: FlutterFlowTheme.of(context).secondaryBackground,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'How do you create custom widget in flutter?',
-                          style:
-                              FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Manrope',
-                                    letterSpacing: 0,
-                                  ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FFButtonWidget(
-                  onPressed: () {
-                    print('Button pressed ...');
-                  },
-                  text: 'Answer',
-                  options: FFButtonOptions(
-                    width: MediaQuery.sizeOf(context).width * 0.7,
-                    height: 40,
-                    padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
-                    iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                    color: FlutterFlowTheme.of(context).primary,
-                    textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                          fontFamily: 'Manrope',
-                          color: Colors.white,
-                          letterSpacing: 0,
-                        ),
-                    elevation: 3,
-                    borderSide: BorderSide(
-                      color: Colors.transparent,
-                      width: 1,
-                    ),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: FlutterFlowTheme.of(context).secondaryBackground,
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(360),
-                      bottomRight: Radius.circular(360),
-                      topLeft: Radius.circular(360),
-                      topRight: Radius.circular(360),
-                    ),
-                    border: Border.all(
-                      color: Colors.black,
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            '+5',
-                            style: FlutterFlowTheme.of(context)
-                                .bodyMedium
-                                .override(
-                                  fontFamily: 'Manrope',
-                                  letterSpacing: 0,
-                                ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ].divide(SizedBox(width: 10)),
-            ),
-          ),
-        ],
       ),
     );
   }

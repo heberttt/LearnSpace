@@ -45,6 +45,7 @@ class LoginUIWidget extends StatefulWidget {
 class _LoginUIWidgetState extends State<LoginUIWidget> {
   late LoginUIModel _model;
 
+  String _errorMsg = "";
 
   void _signOut() {
     FirebaseAuth.instance.signOut();
@@ -55,13 +56,12 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
   bool _isSigningIn = false;
   bool _isGoingToCreateNewAccount = false;
 
-  String _getCreateNewUserText(){
-    if(_isGoingToCreateNewAccount){
+  String _getCreateNewUserText() {
+    if (_isGoingToCreateNewAccount) {
       return "Loading...";
     }
     return 'New user? Create account here';
   }
-  
 
   Future<void> _signInWithEmail(String email, String password) async {
     setState(() {
@@ -72,15 +72,18 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
           .signInWithEmailAndPassword(email: email, password: password);
 
       print(userCredentials);
-      
-      
 
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => Home.getUser2(FirebaseAuth.instance.currentUser!.uid)),
+        MaterialPageRoute(
+            builder: (context) =>
+                Home.getUser2(FirebaseAuth.instance.currentUser!.uid)),
       );
     } catch (e) {
       print("Something went wrong");
+      setState(() {
+        _errorMsg = "Wrong user/account!";
+      });
     }
     setState(() {
       _isSigningIn = false;
@@ -104,7 +107,6 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
 
     _model.textController2 ??= TextEditingController();
     _model.textFieldFocusNode2 ??= FocusNode();
-    
   }
 
   @override
@@ -400,6 +402,13 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
                       ),
                     ],
                   ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                    child: Text(
+                      _errorMsg,
+                      style: TextStyle(color: Colors.red[500]),
+                    ),
+                  ),
                   Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -407,7 +416,7 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
                     children: [
                       Padding(
                         padding:
-                            const EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
+                            const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                         child: InkWell(
                           onTap: () {
                             setState(() {

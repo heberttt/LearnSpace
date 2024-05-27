@@ -1,10 +1,12 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:learnspace/Classes/User.dart';
+import 'package:learnspace/pages/LoginUI.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -42,8 +44,10 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
     _model.textFieldFocusNode4 ??= FocusNode();
 
     profilePictureURL = widget.user.profilePictureUrl;
+    _currentUsername = widget.user.username;
   }
 
+  late String _currentUsername;
   late String profilePictureURL;
 
   @override
@@ -53,17 +57,49 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
     super.dispose();
   }
 
-  String _getProfilePicture(){
+  void _changePassword(String password, BuildContext context) async {
+    showDialog(
+    barrierDismissible: false,
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        content: CircularProgressIndicator(),
+      );
+    },
+  );
+    String oldPassword = _model.textController3.text;
+
+    final userCredentials = await FirebaseAuth.instance
+        .signInWithEmailAndPassword(
+            email: widget.user.email, password: oldPassword);
+
+    //Create an instance of the current user.
+    var user = FirebaseAuth.instance.currentUser!;
+
+    //Pass in the password to updatePassword.
+    user.updatePassword(password).then((_) {
+      Navigator.pop(context);
+      FirebaseAuth.instance.signOut();
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginUIWidget()),
+      );
+    }).catchError((error) {
+      print("Password can't be changed" + error.toString());
+      //This might happen, when the wrong password is in, the user isn't found, or if the user hasn't logged in recently.
+    });
+  }
+
+  String _getProfilePicture() {
     return widget.user.profilePictureUrl;
   }
 
-  void  _reloadImage(){
+  void _reloadImage() {
     var nowParam = DateFormat('yyyyddMMHHmm').format(DateTime.now());
     setState(() {
       profilePictureURL = "${widget.user.profilePictureUrl}#$nowParam";
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +172,7 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
                             height: 20,
                             decoration: BoxDecoration(),
                             child: Text(
-                              widget.user.username,
+                              _currentUsername,
                               textAlign: TextAlign.center,
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
@@ -153,13 +189,14 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
                               onPressed: () async {
                                 var pickedImage = await ImagePicker().pickImage(
                                   source: ImageSource.gallery,
-                                  imageQuality: 50,
+                                  imageQuality: 100,
                                   maxWidth: 150,
                                 );
                                 if (pickedImage != null) {
                                   File pickedImageFile = File(pickedImage.path);
-                                  
-                                  await widget.user.updateProfilePicture(pickedImageFile);
+
+                                  await widget.user
+                                      .updateProfilePicture(pickedImageFile);
                                   widget.user.getOtherInfoFromUID();
                                   _reloadImage();
                                 }
@@ -317,8 +354,12 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(0, 30, 0, 0),
                   child: FFButtonWidget(
-                    onPressed: () {
-                      print('Button pressed ...');
+                    onPressed: () async {
+                      String newname = _model.textController2.text;
+                      await widget.user.updateUsername(newname);
+                      setState(() {
+                        _currentUsername = widget.user.username;
+                      });
                     },
                     text: 'Change username',
                     options: FFButtonOptions(
@@ -462,7 +503,7 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
                   padding: EdgeInsetsDirectional.fromSTEB(0, 30, 0, 0),
                   child: FFButtonWidget(
                     onPressed: () {
-                      print('Button pressed ...');
+                      _changePassword(_model.textController4.text, context);
                     },
                     text: 'Change password',
                     options: FFButtonOptions(

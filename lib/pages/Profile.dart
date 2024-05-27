@@ -1,5 +1,6 @@
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:learnspace/Classes/User.dart';
 import 'package:learnspace/pages/ChangeProfile.dart';
@@ -95,10 +96,67 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                   ),
                 ],
               ),
-              Container(
-                width: 100,
-                height: 50,
-                decoration: BoxDecoration(),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 150,
+                    height: 100,
+                    decoration: BoxDecoration(),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            FaIcon(
+                              FontAwesomeIcons.coins,
+                              color: FlutterFlowTheme.of(context).secondaryText,
+                              size: 24,
+                            ),
+                            Text(
+                              "${widget.user.point}",
+                              style: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .override(
+                                    fontFamily: 'Manrope',
+                                    letterSpacing: 0,
+                                  ),
+                            ),
+                          ].divide(SizedBox(width: 5)),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: 150,
+                    height: 100,
+                    decoration: BoxDecoration(),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.thumb_up,
+                          color: FlutterFlowTheme.of(context).secondaryText,
+                          size: 24,
+                        ),
+                        Text(
+                          '0',
+                          style:
+                              FlutterFlowTheme.of(context).bodyMedium.override(
+                                    fontFamily: 'Manrope',
+                                    letterSpacing: 0,
+                                  ),
+                        ),
+                      ].divide(SizedBox(width: 5)),
+                    ),
+                  ),
+                ].divide(SizedBox(width: 30)),
               ),
               Expanded(
                 child: ListView(
@@ -112,7 +170,8 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => ChangeProfileWidget.getUser(widget.user)),
+                              builder: (context) =>
+                                  ChangeProfileWidget.getUser(widget.user)),
                         );
                       },
                       text: 'Change Profile',
@@ -130,7 +189,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                 ),
                         elevation: 3,
                         borderSide: BorderSide(
-                          color: Colors.black,
+                          color: FlutterFlowTheme.of(context).primary,
                           width: 1,
                         ),
                         borderRadius: BorderRadius.circular(0),
@@ -155,7 +214,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                 ),
                         elevation: 3,
                         borderSide: BorderSide(
-                          color: Colors.black,
+                          color: FlutterFlowTheme.of(context).primary,
                           width: 1,
                         ),
                         borderRadius: BorderRadius.circular(0),
@@ -180,7 +239,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                 ),
                         elevation: 3,
                         borderSide: BorderSide(
-                          color: Colors.black,
+                          color: FlutterFlowTheme.of(context).primary,
                           width: 1,
                         ),
                         borderRadius: BorderRadius.circular(0),
@@ -205,7 +264,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                 ),
                         elevation: 3,
                         borderSide: BorderSide(
-                          color: Colors.black,
+                          color: FlutterFlowTheme.of(context).primary,
                           width: 1,
                         ),
                         borderRadius: BorderRadius.circular(0),
@@ -230,7 +289,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                 ),
                         elevation: 3,
                         borderSide: BorderSide(
-                          color: Colors.black,
+                          color: FlutterFlowTheme.of(context).primary,
                           width: 1,
                         ),
                         borderRadius: BorderRadius.circular(0),
