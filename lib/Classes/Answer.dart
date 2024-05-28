@@ -38,15 +38,13 @@ class Answer {
 
     List<String> commentIDs = await getCommentIDs();
 
-    for (String commentID in commentIDs){
+    for (String commentID in commentIDs) {
       Comment comment = Comment(commentID, answerID, questionID);
       await comment.getOtherDataFromID();
       comments.add(comment);
     }
 
     this.comments = comments;
-    
-    
   }
 
   Future<List<String>> getCommentIDs() async {
@@ -68,7 +66,7 @@ class Answer {
         commentIDs.add(doc.id);
       }
     } catch (e) {
-      print("Error fetching document IDs: $e");
+      print(e);
     }
     return commentIDs;
   }

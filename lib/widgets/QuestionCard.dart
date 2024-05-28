@@ -7,6 +7,7 @@ import 'package:learnspace/Classes/Answer.dart';
 import 'package:learnspace/Classes/Question.dart';
 import 'package:learnspace/pages/LoginUI.dart';
 import 'package:learnspace/pages/Profile.dart';
+import 'package:learnspace/pages/QnA.dart';
 import 'package:learnspace/widgets/SearchBar.dart';
 import 'package:provider/provider.dart';
 import '../Classes/User.dart';
@@ -23,7 +24,6 @@ class QuestionCard extends StatefulWidget {
 }
 
 class _QuestionCardState extends State<QuestionCard> {
-
   @override
   void initState() {
     super.initState();
@@ -166,10 +166,11 @@ class _QuestionCardState extends State<QuestionCard> {
                 children: [
                   FFButtonWidget(
                     onPressed: () async {
-                      print(widget.question.user.username);
-                      print(widget.question.user.id);
-                      print(widget.question.user.profilePictureUrl);
-                      print(widget.question.user.role);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => QuestionPageWidget.getQuestion(widget.question)),
+                      );
                     },
                     text: 'Answer',
                     options: FFButtonOptions(

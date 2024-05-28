@@ -27,8 +27,6 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-late var SKey;
-
 class _HomeState extends State<Home> {
   int _selectedIndex = 0;
   late LearnSpaceUser _user;
@@ -48,12 +46,14 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     LearnSpaceUser _user = widget.user;
-    _widgetOptions = [MainWidget.getUser(_user), ProfileWidget.getUser(_user)];
+    _widgetOptions = [
+      MainWidget.getUser(_user, HomeScaffoldKey),
+      ProfileWidget.getUser(_user)
+    ];
   }
 
   @override
   Widget build(BuildContext context) {
-    SKey = HomeScaffoldKey;
     return SafeArea(
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
@@ -68,7 +68,7 @@ class _HomeState extends State<Home> {
             size: 24,
           ),
         ),
-        key: SKey,
+        key: HomeScaffoldKey,
         body: _widgetOptions[_selectedIndex],
         drawer: Drawer(
           child: ListView(
@@ -209,7 +209,9 @@ class MainWidget extends StatefulWidget {
 
   LearnSpaceUser user = LearnSpaceUser();
 
-  MainWidget.getUser(this.user, {super.key});
+  late GlobalKey<ScaffoldState> Skey;
+
+  MainWidget.getUser(this.user, this.Skey, {super.key});
 
   @override
   State<MainWidget> createState() => _MainWidgetState();
@@ -344,7 +346,7 @@ class _MainWidgetState extends State<MainWidget> {
                 size: 24,
               ),
               onPressed: () {
-                SKey.currentState!.openDrawer();
+                widget.Skey.currentState!.openDrawer();
                 print("Open drawer!");
               },
             ),
@@ -505,15 +507,18 @@ class _MainWidgetState extends State<MainWidget> {
                   ),
                 ),
                 Expanded(
-                  child: ListView.builder(
-                    padding: EdgeInsets.zero,
-                    shrinkWrap: true,
-                    scrollDirection: Axis.vertical,
-                    itemCount: _listviewChildrens.length,
-                    itemBuilder: (BuildContext context, int index) { 
+                  child: RefreshIndicator(
+                    onRefresh: _fetchQuestionCards,
+                    child: ListView.builder(
+                      padding: EdgeInsets.zero,
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      itemCount: _listviewChildrens.length,
+                      itemBuilder: (BuildContext context, int index) {
                         return _listviewChildrens[index];
-                     },
-                    //children: _listviewChildrens.divide(SizedBox(height: 20)),
+                      },
+                      //children: _listviewChildrens.divide(SizedBox(height: 20)),
+                    ),
                   ),
                 ),
               ],
