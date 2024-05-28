@@ -505,11 +505,15 @@ class _MainWidgetState extends State<MainWidget> {
                   ),
                 ),
                 Expanded(
-                  child: ListView(
+                  child: ListView.builder(
                     padding: EdgeInsets.zero,
                     shrinkWrap: true,
                     scrollDirection: Axis.vertical,
-                    children: _listviewChildrens.divide(SizedBox(height: 20)),
+                    itemCount: _listviewChildrens.length,
+                    itemBuilder: (BuildContext context, int index) { 
+                        return _listviewChildrens[index];
+                     },
+                    //children: _listviewChildrens.divide(SizedBox(height: 20)),
                   ),
                 ),
               ],
