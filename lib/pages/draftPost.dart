@@ -22,7 +22,6 @@ class _DraftPostWidgetState extends State<DraftPostWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
-
   bool attached = false;
 
   List<String> _topics = [""];
@@ -37,7 +36,10 @@ class _DraftPostWidgetState extends State<DraftPostWidget> {
     }
 
     return Image.file(
-      image, width: 300, height: 200, fit: BoxFit.cover,
+      image,
+      width: 300,
+      height: 200,
+      fit: BoxFit.cover,
     );
 
     // return ClipRRect(
@@ -116,6 +118,7 @@ class _DraftPostWidgetState extends State<DraftPostWidget> {
 
   String? selectedTopic;
   String _postStatus = "Post";
+  String _errorMessage = "";
 
   @override
   Widget build(BuildContext context) {
@@ -178,12 +181,10 @@ class _DraftPostWidgetState extends State<DraftPostWidget> {
                     ),
                     FlutterFlowDropDown(
                       options: myStates.topics,
-                      
                       onChanged: (val) {
                         selectedTopic = val;
                         setState(() => _model.dropDownValue = val);
                       },
-                          
                       width: 300,
                       height: 56,
                       textStyle:
@@ -285,7 +286,6 @@ class _DraftPostWidgetState extends State<DraftPostWidget> {
                             _model.textControllerValidator.asValidator(context),
                       ),
                     ),
-                    
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(10, 10, 10, 0),
                       child: getImage(),
@@ -293,7 +293,11 @@ class _DraftPostWidgetState extends State<DraftPostWidget> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("data"),
+                        Text(_errorMessage, 
+                          style: TextStyle(
+                            color: Colors.red[500],
+                          )
+                        ),
                       ],
                     ),
                     Padding(
@@ -307,32 +311,51 @@ class _DraftPostWidgetState extends State<DraftPostWidget> {
                                 EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
                             child: FFButtonWidget(
                               onPressed: () {
-                                if(selectedTopic != null){
-
+                                if (selectedTopic == null) {
+                                  setState(() {
+                                    _errorMessage = "Please choose a topic!";
+                                  });
+                                  return;
+                                } else if (_model.textController.text == "") {
+                                  setState(() {
+                                    _errorMessage = "Please enter a content!";
+                                  });
+                                  return;
                                 }
 
                                 if (attached == true && selectedTopic != null) {
                                   setState(() {
                                     _postStatus = "...";
                                   });
-                                  Question uploadingQuestion = Question.getEmpty();
-                                  uploadingQuestion.setContent(_model.textController.text);
+                                  Question uploadingQuestion =
+                                      Question.getEmpty();
+                                  uploadingQuestion
+                                      .setContent(_model.textController.text);
                                   uploadingQuestion.setPlusPoint(10);
-                                  uploadingQuestion.setQuestionType(selectedTopic!);
-                                  
-                                  uploadingQuestion.uploadQuestion(myStates.currentUser, image);
+                                  uploadingQuestion
+                                      .setQuestionType(selectedTopic!);
+
+                                  uploadingQuestion.uploadQuestion(
+                                      myStates.currentUser, image);
 
                                   Navigator.pop(context);
-                                }else{
+                                } else {
                                   setState(() {
                                     _postStatus = "...";
                                   });
-                                  Question uploadingQuestion = Question.getEmpty();
-                                  uploadingQuestion.setContent(_model.textController.text);
+                                  Question uploadingQuestion =
+                                      Question.getEmpty();
+                                  uploadingQuestion
+                                      .setContent(_model.textController.text);
                                   uploadingQuestion.setPlusPoint(10);
-                                  uploadingQuestion.setQuestionType(selectedTopic!);
+                                  uploadingQuestion
+                                      .setQuestionType(selectedTopic!);
 
-                                  uploadingQuestion.uploadQuestionWithoutAttachment(myStates.currentUser);
+                                  uploadingQuestion
+                                      .uploadQuestionWithoutAttachment(
+                                          myStates.currentUser);
+
+                                  Navigator.pop(context);
                                 }
                               },
                               text: _postStatus,
@@ -363,9 +386,7 @@ class _DraftPostWidgetState extends State<DraftPostWidget> {
                           getAttachButton(),
                         ],
                       ),
-                      
                     ),
-                    
                   ],
                 ),
               ],

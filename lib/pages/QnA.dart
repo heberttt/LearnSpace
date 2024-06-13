@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:learnspace/Classes/Answer.dart';
 import 'package:learnspace/Classes/Question.dart';
+import 'package:learnspace/pages/draftAnswer.dart';
+import 'package:learnspace/pages/draftPost.dart';
 import 'package:learnspace/widgets/AnswerPiece.dart';
 import 'package:provider/provider.dart';
 
@@ -185,6 +187,34 @@ class _QuestionPageWidgetState extends State<QuestionPageWidget> {
           Padding(
             padding: EdgeInsetsDirectional.fromSTEB(0, 30, 0, 20),
             child: _getAttachmentIfExists(),
+          ),
+          FFButtonWidget(
+            onPressed: () {
+              Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => DraftAnswerWidget.getQuestion(widget.question)),
+                  );
+            },
+            text: 'Answer',
+            options: FFButtonOptions(
+              width: MediaQuery.sizeOf(context).width * 0.95,
+              height: 40,
+              padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
+              iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+              color: FlutterFlowTheme.of(context).primary,
+              textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                    fontFamily: 'Manrope',
+                    color: Colors.white,
+                    letterSpacing: 0,
+                  ),
+              elevation: 3,
+              borderSide: BorderSide(
+                color: Colors.transparent,
+                width: 1,
+              ),
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
           Row(
             mainAxisSize: MainAxisSize.max,

@@ -78,6 +78,39 @@ class _AnswerPieceState extends State<AnswerPiece> {
         ),
       ),
       Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0,20,0,10),
+            child: FFButtonWidget(
+                  onPressed: () {
+                    
+                  },
+                  text: 'Add Comment',
+                  options: FFButtonOptions(
+                    width: MediaQuery.sizeOf(context).width * 0.95,
+                    height: 30,
+                    padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
+                    iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                    color: FlutterFlowTheme.of(context).primary,
+                    textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                          fontFamily: 'Manrope',
+                          color: Colors.white,
+                          letterSpacing: 0,
+                          fontSize: 10,
+                        ),
+                    elevation: 3,
+                    borderSide: BorderSide(
+                      color: Colors.transparent,
+                      width: 1,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+          ),
+        ],
+      ),
+      Row(
         mainAxisSize: MainAxisSize.max,
         children: [
           Expanded(

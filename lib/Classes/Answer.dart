@@ -16,6 +16,11 @@ class Answer {
   String questionID = "";
 
   Answer(this.answerID, this.questionID);
+  Answer.getEmpty();
+
+  void setQuestionID(String newQuestionID) {
+    questionID = newQuestionID;
+  }
 
   Future<void> getOtherDataFromID() async {
     final ref = FirebaseDatabase.instance.ref();
@@ -73,5 +78,22 @@ class Answer {
 
   void setContent(String data) {
     content = data;
+  }
+
+  void setUser(LearnSpaceUser newUser) {
+    user = newUser;
+  }
+
+  Future<void> uploadAnswer() async {
+    final db = FirebaseFirestore.instance;
+
+    final data = {'content': content, 'userID': user.id};
+
+    DocumentReference mainDocRef = db.collection('questions').doc(questionID);
+
+    // Reference to the sub-collection
+    CollectionReference subCollectionRef = mainDocRef.collection("answers");
+    // Adding data to the sub-collection
+    await subCollectionRef.add(data);
   }
 }
