@@ -259,6 +259,9 @@ class _MainWidgetState extends State<MainWidget> {
       questionCards.add(questionCard);
     }
 
+
+    questionCards.sort((b,a) => a.question.date.compareTo(b.question.date));
+
     return questionCards;
   }
 
@@ -332,7 +335,16 @@ class _MainWidgetState extends State<MainWidget> {
         ],
       ),
     ];
+
+
+    
+
     _listviewChildrens.addAll(questionCards);
+
+
+    
+
+
     setState(() {
       this._listviewChildrens = _listviewChildrens;
     });

@@ -1,7 +1,12 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:learnspace/Classes/Question.dart';
+import 'package:learnspace/Classes/User.dart';
 import 'package:learnspace/states.dart';
 import 'package:provider/provider.dart';
 
@@ -17,25 +22,80 @@ class _DraftPostWidgetState extends State<DraftPostWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
-  String attachedImageLink = "";
+
+  bool attached = false;
 
   List<String> _topics = [""];
 
+  late File image;
+
   Widget getImage() {
-    if (attachedImageLink == "") {
+    if (attached == false) {
       return SizedBox(
         height: 0.01,
       );
     }
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: Image.network(
-        "https://cdn2.thecatapi.com/images/ebv.jpg",
-        width: 300,
-        height: 200,
-        fit: BoxFit.cover,
-      ),
+
+    return Image.file(
+      image, width: 300, height: 200, fit: BoxFit.cover,
     );
+
+    // return ClipRRect(
+    //   borderRadius: BorderRadius.circular(8),
+    //   child: Image.network(
+    //     image,
+    //     width: 300,
+    //     height: 200,
+    //     fit: BoxFit.cover,
+    //   ),
+    // );
+  }
+
+  Widget getAttachButton() {
+    if (attached == false) {
+      return FlutterFlowIconButton(
+        borderColor: FlutterFlowTheme.of(context).primary,
+        borderRadius: 20,
+        borderWidth: 1,
+        buttonSize: 40,
+        icon: Icon(
+          Icons.attach_file,
+          color: FlutterFlowTheme.of(context).primaryText,
+          size: 24,
+        ),
+        onPressed: () async {
+          var pickedImage = await ImagePicker().pickImage(
+            source: ImageSource.gallery,
+            imageQuality: 100,
+            maxWidth: 7000,
+          );
+          if (pickedImage != null) {
+            File pickedImageFile = File(pickedImage.path);
+            setState(() {
+              attached = true;
+              image = pickedImageFile;
+            });
+          }
+        },
+      );
+    } else {
+      return FlutterFlowIconButton(
+        borderColor: FlutterFlowTheme.of(context).primary,
+        borderRadius: 20,
+        borderWidth: 1,
+        buttonSize: 40,
+        icon: Icon(
+          Icons.close,
+          color: FlutterFlowTheme.of(context).primaryText,
+          size: 24,
+        ),
+        onPressed: () {
+          setState(() {
+            attached = false;
+          });
+        },
+      );
+    }
   }
 
   @override
@@ -54,7 +114,8 @@ class _DraftPostWidgetState extends State<DraftPostWidget> {
     super.dispose();
   }
 
-  
+  String? selectedTopic;
+  String _postStatus = "Post";
 
   @override
   Widget build(BuildContext context) {
@@ -117,8 +178,12 @@ class _DraftPostWidgetState extends State<DraftPostWidget> {
                     ),
                     FlutterFlowDropDown(
                       options: myStates.topics,
-                      onChanged: (val) =>
-                          setState(() => _model.dropDownValue = val),
+                      
+                      onChanged: (val) {
+                        selectedTopic = val;
+                        setState(() => _model.dropDownValue = val);
+                      },
+                          
                       width: 300,
                       height: 56,
                       textStyle:
@@ -220,12 +285,19 @@ class _DraftPostWidgetState extends State<DraftPostWidget> {
                             _model.textControllerValidator.asValidator(context),
                       ),
                     ),
+                    
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(10, 10, 10, 0),
                       child: getImage(),
                     ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("data"),
+                      ],
+                    ),
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 40),
+                      padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 10),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -234,8 +306,36 @@ class _DraftPostWidgetState extends State<DraftPostWidget> {
                             padding:
                                 EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
                             child: FFButtonWidget(
-                              onPressed: () {},
-                              text: 'Post',
+                              onPressed: () {
+                                if(selectedTopic != null){
+
+                                }
+
+                                if (attached == true && selectedTopic != null) {
+                                  setState(() {
+                                    _postStatus = "...";
+                                  });
+                                  Question uploadingQuestion = Question.getEmpty();
+                                  uploadingQuestion.setContent(_model.textController.text);
+                                  uploadingQuestion.setPlusPoint(10);
+                                  uploadingQuestion.setQuestionType(selectedTopic!);
+                                  
+                                  uploadingQuestion.uploadQuestion(myStates.currentUser, image);
+
+                                  Navigator.pop(context);
+                                }else{
+                                  setState(() {
+                                    _postStatus = "...";
+                                  });
+                                  Question uploadingQuestion = Question.getEmpty();
+                                  uploadingQuestion.setContent(_model.textController.text);
+                                  uploadingQuestion.setPlusPoint(10);
+                                  uploadingQuestion.setQuestionType(selectedTopic!);
+
+                                  uploadingQuestion.uploadQuestionWithoutAttachment(myStates.currentUser);
+                                }
+                              },
+                              text: _postStatus,
                               options: FFButtonOptions(
                                 width: MediaQuery.sizeOf(context).width * 0.8,
                                 height: 40,
@@ -260,23 +360,12 @@ class _DraftPostWidgetState extends State<DraftPostWidget> {
                               ),
                             ),
                           ),
-                          FlutterFlowIconButton(
-                            borderColor: FlutterFlowTheme.of(context).primary,
-                            borderRadius: 20,
-                            borderWidth: 1,
-                            buttonSize: 40,
-                            icon: Icon(
-                              Icons.attach_file,
-                              color: FlutterFlowTheme.of(context).primaryText,
-                              size: 24,
-                            ),
-                            onPressed: () {
-                              print('IconButton pressed ...');
-                            },
-                          ),
+                          getAttachButton(),
                         ],
                       ),
+                      
                     ),
+                    
                   ],
                 ),
               ],
