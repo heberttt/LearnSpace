@@ -6,6 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:learnspace/Classes/Question.dart';
 import 'package:learnspace/pages/LoginUI.dart';
 import 'package:learnspace/pages/Profile.dart';
+import 'package:learnspace/pages/draftPost.dart';
+import 'package:learnspace/states.dart';
 import 'package:learnspace/widgets/QuestionCard.dart';
 import 'package:learnspace/widgets/SearchBar.dart';
 import 'package:provider/provider.dart';
@@ -32,6 +34,26 @@ class _HomeState extends State<Home> {
   late LearnSpaceUser _user;
   double vdheight = 4;
 
+  Route _createDraft() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          const DraftPostWidget(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(0.0, 1.0);
+        const end = Offset.zero;
+        const curve = Curves.ease;
+
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
+
   void showSideBar() {
     HomeScaffoldKey.currentState?.openDrawer();
   }
@@ -50,15 +72,18 @@ class _HomeState extends State<Home> {
       MainWidget.getUser(_user, HomeScaffoldKey),
       ProfileWidget.getUser(_user)
     ];
+
   }
 
   @override
   Widget build(BuildContext context) {
+
+    Provider.of<MyStates>(context, listen: true).getTopics();
     return SafeArea(
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            print('FloatingActionButton pressed ...');
+            Navigator.of(context).push(_createDraft());
           },
           backgroundColor: FlutterFlowTheme.of(context).primary,
           elevation: 8,

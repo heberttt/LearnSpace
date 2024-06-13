@@ -1,9 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:learnspace/pages/draftPost.dart';
+import 'package:learnspace/states.dart';
 import 'pages/LoginUI.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'pages/Home.dart';
+import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,7 +14,11 @@ Future<void> main() async {
 //   await Firebase.initializeApp(
 //   options: DefaultFirebaseOptions.currentPlatform,
 // );
-  runApp(MaterialApp(
+
+runApp(
+    ChangeNotifierProvider(
+      create: (context) => MyStates(),
+      child: MaterialApp(
     home: FutureBuilder(
       future: Firebase.initializeApp(
           options: DefaultFirebaseOptions.currentPlatform),
@@ -35,7 +42,10 @@ Future<void> main() async {
         ); // Ends the default case
       },
     ),
-  ));
+  ),
+    ),
+  );
+
 }
 
 class AuthWrapper extends StatelessWidget {
@@ -62,3 +72,4 @@ class AuthWrapper extends StatelessWidget {
     ); // Ends StreamBuilder
   } // Ends the build method
 } // Ends AuthWrapper class
+
