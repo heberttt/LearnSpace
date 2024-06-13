@@ -72,13 +72,12 @@ class _HomeState extends State<Home> {
       MainWidget.getUser(_user, HomeScaffoldKey),
       ProfileWidget.getUser(_user)
     ];
-
   }
 
   @override
   Widget build(BuildContext context) {
-
     Provider.of<MyStates>(context, listen: true).getTopics();
+    Provider.of<MyStates>(context, listen: true).setCurrentUser(widget.user);
     return SafeArea(
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
