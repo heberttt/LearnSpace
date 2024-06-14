@@ -29,7 +29,9 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
+  TabController? tabController;
+
   int _selectedIndex = 0;
   late LearnSpaceUser _user;
   double vdheight = 4;
@@ -72,6 +74,14 @@ class _HomeState extends State<Home> {
       MainWidget.getUser(_user, HomeScaffoldKey),
       ProfileWidget.getUser(_user)
     ];
+    tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    tabController!.dispose();
   }
 
   bool _checkIfInMain() {
@@ -104,7 +114,11 @@ class _HomeState extends State<Home> {
           ),
         ),
         key: HomeScaffoldKey,
-        body: _widgetOptions[_selectedIndex],
+        body: TabBarView(
+          physics: NeverScrollableScrollPhysics(),
+        controller: tabController,
+        children: _widgetOptions,
+        ) ,
         drawer: Drawer(
           child: ListView(
             padding: const EdgeInsets.all(0),
@@ -218,6 +232,7 @@ class _HomeState extends State<Home> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      tabController!.index = _selectedIndex;
     });
   }
 }
@@ -229,6 +244,8 @@ class MainModel extends FlutterFlowModel<MainWidget> {
   // State field(s) for DropDown widget.
   String? dropDownValue;
   FormFieldController<String>? dropDownValueController;
+
+  
 
   @override
   void initState(BuildContext context) {}
@@ -307,8 +324,11 @@ class MainWidget extends StatefulWidget {
   State<MainWidget> createState() => _MainWidgetState();
 }
 
-class _MainWidgetState extends State<MainWidget> {
+class _MainWidgetState extends State<MainWidget> with AutomaticKeepAliveClientMixin{
   late MainModel _model;
+
+  @override
+  bool get wantKeepAlive => true;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -361,7 +381,14 @@ class _MainWidgetState extends State<MainWidget> {
 
   Future<void> _fetchQuestionCards() async {
     setState(() {
-      this._listviewChildrens = [Container(height: 40, child: Center(child: CircularProgressIndicator(),),)];
+      this._listviewChildrens = [
+        Container(
+          height: 40,
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        )
+      ];
     });
 
     questionCards = await getQuestionCards();
