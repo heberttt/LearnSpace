@@ -65,7 +65,14 @@ class AuthWrapper extends StatelessWidget {
 
         return Scaffold(
           body: Center(
-            child: CircularProgressIndicator(),
+            child: Center(child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Image.asset(
+                          'assets/images/LearnSpaceLogo.png',
+                          width: 60,
+                          fit: BoxFit.cover,
+                        ),
+                      ),),
           ),
         ); // Ends the default case
       },

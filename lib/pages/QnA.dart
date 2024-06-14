@@ -34,8 +34,6 @@ class _QuestionPageWidgetState extends State<QuestionPageWidget> {
     _model = createModel(context, () => QuestionPageModel());
   }
 
-
-
   Future<void> _updateQuestion() async {
     Question newQuestion = widget.question;
     await newQuestion.getOtherDataFromID();
@@ -57,7 +55,18 @@ class _QuestionPageWidgetState extends State<QuestionPageWidget> {
       return ClipRRect(
           borderRadius: BorderRadius.circular(8),
           child: Image.network(widget.question.attachementURL,
-              width: 300, height: 200, fit: BoxFit.cover));
+              width: 300, height: 200, fit: BoxFit.cover,
+              frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+            return child;
+          }, loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) {
+              return child;
+            } else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          }));
     }
     return const SizedBox(height: 0);
   }
@@ -194,12 +203,13 @@ class _QuestionPageWidgetState extends State<QuestionPageWidget> {
           FFButtonWidget(
             onPressed: () {
               Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => DraftAnswerWidget.getQuestion(widget.question)),
-                  ).then((_) {
-                    _updateQuestion();
-                  });
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        DraftAnswerWidget.getQuestion(widget.question)),
+              ).then((_) {
+                _updateQuestion();
+              });
             },
             text: 'Answer',
             options: FFButtonOptions(
@@ -291,7 +301,8 @@ class _QuestionPageWidgetState extends State<QuestionPageWidget> {
             child: ListView(
               padding: EdgeInsets.zero,
               scrollDirection: Axis.vertical,
-              children: _getListViewChildren().divide(const SizedBox(height: 15)),
+              children:
+                  _getListViewChildren().divide(const SizedBox(height: 15)),
             ),
           ),
         ),
@@ -306,8 +317,8 @@ class _QuestionPageWidgetState extends State<QuestionPageWidget> {
       AnswerPiece ap = AnswerPiece.getAnswer(widget.question, a);
       pieces.add(ap);
     }
-    
-    pieces.sort((b,a) => a.answer.date.compareTo(b.answer.date));
+
+    pieces.sort((b, a) => a.answer.date.compareTo(b.answer.date));
 
     answerPieces = pieces;
   }

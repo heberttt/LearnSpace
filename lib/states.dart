@@ -18,6 +18,13 @@ class MyStates with ChangeNotifier {
     currentUser = user;
   }
 
+  String selectedTopic = "All";
+
+  void selectTopic(String topic) {
+    selectedTopic = topic;
+    notifyListeners();
+  }
+
   Future<void> getTopics() async {
     List<String> topics = [];
     try {
@@ -30,8 +37,12 @@ class MyStates with ChangeNotifier {
 
       // Iterate through each document and add the document ID to the list
       for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+        if (doc.id == 'Others') {
+          continue;
+        }
         topics.add(doc.id);
       }
+      topics.add('Others');
     } catch (e) {
       print("Error fetching document IDs: $e");
     }

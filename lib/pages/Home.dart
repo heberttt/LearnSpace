@@ -228,6 +228,61 @@ class MainModel extends FlutterFlowModel<MainWidget> {
   }
 }
 
+class TopicButton extends StatefulWidget {
+  TopicButton.getTopic(this.topic, {super.key});
+
+  late String topic;
+  @override
+  State<TopicButton> createState() => _TopicButtonState();
+}
+
+class _TopicButtonState extends State<TopicButton> {
+  Color selectedText(context) {
+    final myStates = Provider.of<MyStates>(context);
+    if (myStates.selectedTopic != widget.topic) {
+      return Colors.white;
+    }
+    return FlutterFlowTheme.of(context).primary;
+  }
+
+  Color selectedBackground(context) {
+    final myStates = Provider.of<MyStates>(context);
+    if (myStates.selectedTopic == widget.topic) {
+      return Colors.white;
+    }
+    return FlutterFlowTheme.of(context).primary;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FFButtonWidget(
+      onPressed: () {
+        Provider.of<MyStates>(context, listen: false).selectTopic(widget.topic);
+      },
+      text: widget.topic,
+      options: FFButtonOptions(
+        height: 35,
+        padding: EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
+        iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+        color: selectedBackground(context),
+        textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+              fontFamily: 'Manrope',
+              color: selectedText(context),
+              fontSize: 10,
+              letterSpacing: 0,
+              fontWeight: FontWeight.bold,
+            ),
+        elevation: 3,
+        borderSide: const BorderSide(
+          color: Colors.transparent,
+          width: 1,
+        ),
+        borderRadius: BorderRadius.circular(8),
+      ),
+    );
+  }
+}
+
 class MainWidget extends StatefulWidget {
   MainWidget({super.key});
 
@@ -259,8 +314,7 @@ class _MainWidgetState extends State<MainWidget> {
       questionCards.add(questionCard);
     }
 
-
-    questionCards.sort((b,a) => a.question.date.compareTo(b.question.date));
+    questionCards.sort((b, a) => a.question.date.compareTo(b.question.date));
 
     return questionCards;
   }
@@ -336,14 +390,7 @@ class _MainWidgetState extends State<MainWidget> {
       ),
     ];
 
-
-    
-
     _listviewChildrens.addAll(questionCards);
-
-
-    
-
 
     setState(() {
       this._listviewChildrens = _listviewChildrens;
@@ -355,6 +402,48 @@ class _MainWidgetState extends State<MainWidget> {
     _model.dispose();
 
     super.dispose();
+  }
+
+  List<Widget> _displayedCards(BuildContext context) {
+    final myStates = Provider.of<MyStates>(context);
+
+    List<Widget> displayedCards = [];
+
+    if (myStates.selectedTopic != "All") {
+      for (Widget i in _listviewChildrens) {
+        if (i is QuestionCard &&
+            i.question.questionType == myStates.selectedTopic) {
+          displayedCards.add(i);
+        }
+      }
+      return displayedCards;
+    }
+
+    return _listviewChildrens;
+  }
+
+  List<TopicButton> getTopicButtons(BuildContext context) {
+    List<TopicButton> topics = [];
+
+    final myStates = Provider.of<MyStates>(context);
+
+    List<String> availableTopics = myStates.topics;
+
+    TopicButton topicButton = TopicButton.getTopic("All");
+    topics.add(topicButton);
+
+    for (String topic in availableTopics) {
+      if (topic == 'Others') {
+        continue;
+      }
+      TopicButton topicButton = TopicButton.getTopic(topic);
+      topics.add(topicButton);
+    }
+
+    TopicButton topicButton2 = TopicButton.getTopic('Others');
+    topics.add(topicButton2);
+
+    return topics;
   }
 
   @override
@@ -415,130 +504,14 @@ class _MainWidgetState extends State<MainWidget> {
                   ],
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
+                  padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
-                    padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
+                    padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 20.0),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
-                      children: [
-                        FFButtonWidget(
-                          onPressed: () {
-                            print('Button pressed ...');
-                          },
-                          text: 'Recommended',
-                          options: FFButtonOptions(
-                            height: 35,
-                            padding:
-                                EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
-                            iconPadding:
-                                EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                            color: FlutterFlowTheme.of(context).primary,
-                            textStyle: FlutterFlowTheme.of(context)
-                                .titleSmall
-                                .override(
-                                  fontFamily: 'Manrope',
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                  letterSpacing: 0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                            elevation: 3,
-                            borderSide: BorderSide(
-                              color: Colors.transparent,
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        FFButtonWidget(
-                          onPressed: () {
-                            print('Button pressed ...');
-                          },
-                          text: 'Java',
-                          options: FFButtonOptions(
-                            height: 35,
-                            padding:
-                                EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
-                            iconPadding:
-                                EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                            color: FlutterFlowTheme.of(context).primary,
-                            textStyle: FlutterFlowTheme.of(context)
-                                .titleSmall
-                                .override(
-                                  fontFamily: 'Manrope',
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                  letterSpacing: 0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                            elevation: 3,
-                            borderSide: BorderSide(
-                              color: Colors.transparent,
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        FFButtonWidget(
-                          onPressed: () {
-                            print('Button pressed ...');
-                          },
-                          text: 'Mobile App',
-                          options: FFButtonOptions(
-                            height: 35,
-                            padding:
-                                EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
-                            iconPadding:
-                                EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                            color: FlutterFlowTheme.of(context).primary,
-                            textStyle: FlutterFlowTheme.of(context)
-                                .titleSmall
-                                .override(
-                                  fontFamily: 'Manrope',
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                  letterSpacing: 0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                            elevation: 3,
-                            borderSide: BorderSide(
-                              color: Colors.transparent,
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        FFButtonWidget(
-                          onPressed: () {
-                            print('Button pressed ...');
-                          },
-                          text: 'System Development Methodology',
-                          options: FFButtonOptions(
-                            height: 35,
-                            padding:
-                                EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
-                            iconPadding:
-                                EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                            color: FlutterFlowTheme.of(context).primary,
-                            textStyle: FlutterFlowTheme.of(context)
-                                .titleSmall
-                                .override(
-                                  fontFamily: 'Manrope',
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                  letterSpacing: 0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                            elevation: 3,
-                            borderSide: BorderSide(
-                              color: Colors.transparent,
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      ].divide(SizedBox(width: 10)),
+                      children:
+                          getTopicButtons(context).divide(SizedBox(width: 10)),
                     ),
                   ),
                 ),
@@ -549,9 +522,9 @@ class _MainWidgetState extends State<MainWidget> {
                       padding: EdgeInsets.zero,
                       shrinkWrap: true,
                       scrollDirection: Axis.vertical,
-                      itemCount: _listviewChildrens.length,
+                      itemCount: _displayedCards(context).length,
                       itemBuilder: (BuildContext context, int index) {
-                        return _listviewChildrens[index];
+                        return _displayedCards(context)[index];
                       },
                       //children: _listviewChildrens.divide(SizedBox(height: 20)),
                     ),

@@ -83,6 +83,7 @@ class _QuestionCardState extends State<QuestionCard> {
                       child: Image.network(
                         widget.question.user.profilePictureUrl,
                         fit: BoxFit.cover,
+                        
                       ),
                     ),
                   ),
