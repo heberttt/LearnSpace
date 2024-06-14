@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:learnspace/Classes/User.dart';
 import 'package:learnspace/pages/ChangeProfile.dart';
+import 'package:learnspace/pages/ShoppingPage.dart';
 import 'package:learnspace/states.dart';
 import 'package:provider/provider.dart';
 
@@ -198,10 +199,16 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                       ),
                     ),
                     FFButtonWidget(
+                      icon: const Icon(Icons.shopping_cart),
                       onPressed: () {
-                        print('Button pressed ...');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  ShoppingPageWidget()),
+                        );
                       },
-                      text: 'Button',
+                      text: 'Vouchers',
                       options: FFButtonOptions(
                         width: MediaQuery.sizeOf(context).width,
                         height: 60,
