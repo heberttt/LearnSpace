@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -46,7 +45,7 @@ class Question {
 
     List<String> answerIDs = await getAnswerIDs();
 
-    for (String answerID in answerIDs){
+    for (String answerID in answerIDs) {
       Answer answer = Answer(answerID, questionID);
       await answer.getOtherDataFromID();
       answers.add(answer);
@@ -55,45 +54,71 @@ class Question {
     this.answers = answers;
   }
 
-  Future<void> uploadQuestionWithoutAttachment(LearnSpaceUser uploadingUser)async {
+  Future<void> uploadQuestionWithoutAttachment(
+      LearnSpaceUser uploadingUser) async {
     final db = FirebaseFirestore.instance;
 
     DateTime now = DateTime.now();
 
     String date = now.toString().split('.')[0];
-    
+
     //date = "${now.year}/${now.month}/${now.day} ${now.hour}:${now.minute}:${now.second}";
- 
-    final data = {"attachmentURL" : "", "content": content, "date" : date, "plusPoint": plusPoint, "questionType": questionType, "userID": uploadingUser.id};
-    
-    await db.collection("questions").add(data).then((documentSnapshot){
+
+    final data = {
+      "attachmentURL": "",
+      "content": content,
+      "date": date,
+      "plusPoint": plusPoint,
+      "questionType": questionType,
+      "userID": uploadingUser.id
+    };
+
+    await db.collection("questions").add(data).then((documentSnapshot) {
       questionID = documentSnapshot.id;
     });
-
-    
   }
 
-  Future<void> uploadQuestion(LearnSpaceUser uploadingUser, File pickedImage)async {
+  bool checkIfAnsweredBefore(LearnSpaceUser checkingUser) {
+    bool exist = false;
+    for (Answer ans in answers) {
+      if (ans.user.id == checkingUser.id) {
+        exist = true;
+        break;
+      }
+    }
+
+    return exist;
+  }
+
+  Future<void> uploadQuestion(
+      LearnSpaceUser uploadingUser, File pickedImage) async {
     final db = FirebaseFirestore.instance;
 
     DateTime now = DateTime.now();
 
     String date = now.toString().split('.')[0];
-    
+
     //date = "${now.year}/${now.month}/${now.day} ${now.hour}:${now.minute}:${now.second}";
- 
-    final data = {"attachmentURL" : "", "content": content, "date" : date, "plusPoint": plusPoint, "questionType": questionType, "userID": uploadingUser.id};
-    
-    await db.collection("questions").add(data).then((documentSnapshot){
+
+    final data = {
+      "attachmentURL": "",
+      "content": content,
+      "date": date,
+      "plusPoint": plusPoint,
+      "questionType": questionType,
+      "userID": uploadingUser.id
+    };
+
+    await db.collection("questions").add(data).then((documentSnapshot) {
       questionID = documentSnapshot.id;
     });
 
-    
     final storageRef = FirebaseStorage.instance.ref();
     final mountainsRef = storageRef.child("$questionID.jpg");
     try {
       await mountainsRef.putFile(pickedImage);
-      final attachmentPictureURLRef = db.collection("questions").doc(questionID);
+      final attachmentPictureURLRef =
+          db.collection("questions").doc(questionID);
       await attachmentPictureURLRef.update({
         "attachmentURL":
             'https://firebasestorage.googleapis.com/v0/b/learnspacefirebase.appspot.com/o/$questionID.jpg?alt=media'
@@ -149,6 +174,4 @@ class Question {
   void setContent(String content) {
     this.content = content;
   }
-
-  
 }

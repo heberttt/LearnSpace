@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:learnspace/Classes/User.dart';
 import 'package:learnspace/pages/LoginUI.dart';
+import 'package:learnspace/states.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -59,14 +60,14 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
 
   void _changePassword(String password, BuildContext context) async {
     showDialog(
-    barrierDismissible: false,
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        content: Center(child: CircularProgressIndicator()),
-      );
-    },
-  );
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: Center(child: CircularProgressIndicator()),
+        );
+      },
+    );
     String oldPassword = _model.textController3.text;
 
     final userCredentials = await FirebaseAuth.instance
@@ -103,6 +104,7 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final myStates = Provider.of<MyStates>(context);
     return SafeArea(
       child: GestureDetector(
         onTap: () => _model.unfocusNode.canRequestFocus

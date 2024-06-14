@@ -6,6 +6,7 @@ import 'package:learnspace/Classes/Answer.dart';
 import 'package:learnspace/Classes/Question.dart';
 import 'package:learnspace/pages/draftAnswer.dart';
 import 'package:learnspace/pages/draftPost.dart';
+import 'package:learnspace/states.dart';
 import 'package:learnspace/widgets/AnswerPiece.dart';
 import 'package:provider/provider.dart';
 
@@ -48,6 +49,101 @@ class _QuestionPageWidgetState extends State<QuestionPageWidget> {
     _model.dispose();
 
     super.dispose();
+  }
+
+  Widget _getAnswerButton(BuildContext context) {
+    final myStates = Provider.of<MyStates>(context);
+    if(widget.question.user.id == myStates.currentUser.id){
+      return FFButtonWidget(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    DraftAnswerWidget.getQuestionSelf(widget.question)),
+          ).then((_) {
+            _updateQuestion();
+          });
+        },
+        text: "Comment",
+        options: FFButtonOptions(
+          width: MediaQuery.sizeOf(context).width * 0.95,
+          height: 40,
+          padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
+          iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+          color: FlutterFlowTheme.of(context).primary,
+          textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                fontFamily: 'Manrope',
+                color: Colors.white,
+                letterSpacing: 0,
+              ),
+          elevation: 3,
+          borderSide: BorderSide(
+            color: Colors.transparent,
+            width: 1,
+          ),
+          borderRadius: BorderRadius.circular(8),
+        ),
+      );
+    }
+    if (widget.question.checkIfAnsweredBefore(myStates.currentUser)) {
+      return FFButtonWidget(
+        onPressed: () {
+          
+        },
+        text: "Answered, +${widget.question.plusPoint}!",
+        options: FFButtonOptions(
+          width: MediaQuery.sizeOf(context).width * 0.95,
+          height: 40,
+          padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
+          iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+          color: Color.fromARGB(0, 59, 59, 59),
+          textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                fontFamily: 'Manrope',
+                color: Colors.white,
+                letterSpacing: 0,
+              ),
+          elevation: 1,
+          borderSide: BorderSide(
+            color: Colors.transparent,
+            width: 1,
+          ),
+          borderRadius: BorderRadius.circular(8),
+        ),
+      );
+    } else {
+      return FFButtonWidget(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    DraftAnswerWidget.getQuestion(widget.question)),
+          ).then((_) {
+            _updateQuestion();
+          });
+        },
+        text: "Answer",
+        options: FFButtonOptions(
+          width: MediaQuery.sizeOf(context).width * 0.95,
+          height: 40,
+          padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
+          iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+          color: FlutterFlowTheme.of(context).primary,
+          textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                fontFamily: 'Manrope',
+                color: Colors.white,
+                letterSpacing: 0,
+              ),
+          elevation: 3,
+          borderSide: BorderSide(
+            color: Colors.transparent,
+            width: 1,
+          ),
+          borderRadius: BorderRadius.circular(8),
+        ),
+      );
+    }
   }
 
   Widget _getAttachmentIfExists() {
@@ -200,37 +296,7 @@ class _QuestionPageWidgetState extends State<QuestionPageWidget> {
             padding: EdgeInsetsDirectional.fromSTEB(0, 30, 0, 20),
             child: _getAttachmentIfExists(),
           ),
-          FFButtonWidget(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        DraftAnswerWidget.getQuestion(widget.question)),
-              ).then((_) {
-                _updateQuestion();
-              });
-            },
-            text: 'Answer',
-            options: FFButtonOptions(
-              width: MediaQuery.sizeOf(context).width * 0.95,
-              height: 40,
-              padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
-              iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-              color: FlutterFlowTheme.of(context).primary,
-              textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                    fontFamily: 'Manrope',
-                    color: Colors.white,
-                    letterSpacing: 0,
-                  ),
-              elevation: 3,
-              borderSide: BorderSide(
-                color: Colors.transparent,
-                width: 1,
-              ),
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
+          _getAnswerButton(context),
           Row(
             mainAxisSize: MainAxisSize.max,
             children: [

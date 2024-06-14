@@ -101,5 +101,7 @@ class Answer {
     CollectionReference subCollectionRef = mainDocRef.collection("answers");
     // Adding data to the sub-collection
     await subCollectionRef.add(data);
+
+    
   }
 }

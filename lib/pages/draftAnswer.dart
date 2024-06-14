@@ -12,6 +12,11 @@ class DraftAnswerWidget extends StatefulWidget {
   late Question question;
 
   DraftAnswerWidget.getQuestion(this.question, {super.key});
+  DraftAnswerWidget.getQuestionSelf(this.question, {super.key}) {
+    self = true;
+  }
+
+  bool self = false;
 
   @override
   State<DraftAnswerWidget> createState() => _DraftAnswerWidgetState();
@@ -114,6 +119,9 @@ class _DraftAnswerWidgetState extends State<DraftAnswerWidget> {
 
                   await sendingAnswer.uploadAnswer();
 
+                  if (widget.self == false) {
+                    await myStates.currentUser.plusPoint(widget.question.plusPoint);
+                  }
 
                   Navigator.of(context).pop();
 

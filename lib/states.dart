@@ -14,6 +14,13 @@ class MyStates with ChangeNotifier {
 
   LearnSpaceUser currentUser = LearnSpaceUser();
 
+  String searchedQuestion = "";
+
+  void plusPointCurrentUser(int point) {
+    currentUser.plusPoint(point);
+    notifyListeners();
+  }
+
   void setCurrentUser(LearnSpaceUser user) {
     currentUser = user;
   }
@@ -22,6 +29,15 @@ class MyStates with ChangeNotifier {
 
   void selectTopic(String topic) {
     selectedTopic = topic;
+    notifyListeners();
+  }
+
+  void resetSearch() {
+    searchedQuestion = "";
+  }
+
+  void searchQuestion(String substring) {
+    searchedQuestion = substring;
     notifyListeners();
   }
 

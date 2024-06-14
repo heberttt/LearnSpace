@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
-
+import 'package:learnspace/states.dart';
+import 'package:provider/provider.dart';
 
 class HomeSearchBar extends StatefulWidget {
   const HomeSearchBar({super.key});
@@ -10,42 +10,46 @@ class HomeSearchBar extends StatefulWidget {
 }
 
 class _HomeSearchBarState extends State<HomeSearchBar> {
+  final TextEditingController _textEditingController = TextEditingController();
+
+  String _getHint(BuildContext context) {
+    final myStates = Provider.of<MyStates>(context);
+    if (myStates.searchedQuestion != "") {
+      return myStates.searchedQuestion;
+    } else {
+      return "Search here...";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final myStates = Provider.of<MyStates>(context);
+
+    //Provider.of<MyStates>(context, listen: false).resetSearch();
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
       child: SizedBox(
-        width: MediaQuery.sizeOf(context).width * 0.98,
-        child: SearchAnchor(
-                  builder: (BuildContext context, SearchController controller) {
-                return SearchBar(
-                  hintText: "Search here...",
-                  controller: controller,
-                  padding: const MaterialStatePropertyAll<EdgeInsets>(
-                      EdgeInsets.symmetric(horizontal: 16.0)),
-                  onTap: () {
-                    controller.openView();
-                  },
-                  onChanged: (_) {
-                    controller.openView();
-                  },
-                  leading: const Icon(Icons.search),
-                );
-              }, suggestionsBuilder:
-                      (BuildContext context, SearchController controller) {
-                return List<ListTile>.generate(5, (int index) {
-                  final String item = 'item $index';
-                  return ListTile(
-                    title: Text(item),
-                    onTap: () {
-                      setState(() {
-                        controller.closeView(item);
-                      });
-                    },
-                  );
-                });
-              }),
-      ),
+          width: MediaQuery.sizeOf(context).width * 0.98,
+          child: SearchBar(
+            hintText: _getHint(context),
+            onSubmitted: (query) {
+              FocusManager.instance.primaryFocus?.unfocus();
+            },
+            padding: const MaterialStatePropertyAll<EdgeInsets>(
+                EdgeInsets.symmetric(horizontal: 16.0)),
+            onTap: () {
+              findPost(_textEditingController.text, context);
+            },
+            controller: _textEditingController,
+            onChanged: (query) =>
+                findPost(_textEditingController.text, context),
+            leading: const Icon(Icons.search),
+          )),
     );
+  }
+
+  void findPost(String currentText, BuildContext context) {
+    final myStates = Provider.of<MyStates>(context, listen: false);
+    myStates.searchQuestion(currentText);
   }
 }

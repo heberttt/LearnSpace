@@ -17,6 +17,20 @@ class LearnSpaceUser {
 
   LearnSpaceUser();
 
+  Future<void> plusPoint(int addedPoint) async {
+    point += addedPoint;
+    final db = FirebaseFirestore.instance;
+    final storageRef = FirebaseStorage.instance.ref();
+    try {
+      final profilePictureURLRef = db.collection("users").doc(id);
+      await profilePictureURLRef.update({"point": "$point"}).then(
+          (value) => print("DocumentSnapshot successfully updated!"),
+          onError: (e) => print("Error updating document $e"));
+    } catch (e) {
+      print(e);
+    }
+  }
+
   void setUsername(String username) {
     this.username = username;
   }
@@ -50,10 +64,8 @@ class LearnSpaceUser {
     final storageRef = FirebaseStorage.instance.ref();
     try {
       final profilePictureURLRef = db.collection("users").doc(id);
-      await profilePictureURLRef.update({
-        "username":
-            newName
-      }).then((value) => print("DocumentSnapshot successfully updated!"),
+      await profilePictureURLRef.update({"username": newName}).then(
+          (value) => print("DocumentSnapshot successfully updated!"),
           onError: (e) => print("Error updating document $e"));
     } catch (e) {
       print(e);

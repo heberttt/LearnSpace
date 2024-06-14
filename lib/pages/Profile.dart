@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:learnspace/Classes/User.dart';
 import 'package:learnspace/pages/ChangeProfile.dart';
+import 'package:learnspace/states.dart';
 import 'package:provider/provider.dart';
 
 class ProfileWidget extends StatefulWidget {
@@ -37,6 +38,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final myStates = Provider.of<MyStates>(context);
     return GestureDetector(
       onTap: () => _model.unfocusNode.canRequestFocus
           ? FocusScope.of(context).requestFocus(_model.unfocusNode)
@@ -67,7 +69,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                             shape: BoxShape.circle,
                           ),
                           child: Image.network(
-                            widget.user.profilePictureUrl,
+                            myStates.currentUser.profilePictureUrl,
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -119,7 +121,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                               size: 24,
                             ),
                             Text(
-                              "${widget.user.point}",
+                              "${myStates.currentUser.point}",
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(

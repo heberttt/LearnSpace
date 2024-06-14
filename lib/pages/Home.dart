@@ -74,22 +74,33 @@ class _HomeState extends State<Home> {
     ];
   }
 
+  bool _checkIfInMain() {
+    if (_selectedIndex == 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Provider.of<MyStates>(context, listen: true).getTopics();
     Provider.of<MyStates>(context, listen: true).setCurrentUser(widget.user);
     return SafeArea(
       child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).push(_createDraft());
-          },
-          backgroundColor: FlutterFlowTheme.of(context).primary,
-          elevation: 8,
-          child: Icon(
-            Icons.add,
-            color: FlutterFlowTheme.of(context).info,
-            size: 24,
+        floatingActionButton: Visibility(
+          visible: _checkIfInMain(),
+          child: FloatingActionButton(
+            onPressed: () {
+              Navigator.of(context).push(_createDraft());
+            },
+            backgroundColor: FlutterFlowTheme.of(context).primary,
+            elevation: 8,
+            child: Icon(
+              Icons.add,
+              color: FlutterFlowTheme.of(context).info,
+              size: 24,
+            ),
           ),
         ),
         key: HomeScaffoldKey,
@@ -349,6 +360,10 @@ class _MainWidgetState extends State<MainWidget> {
   List<Widget> _listviewChildrens = [];
 
   Future<void> _fetchQuestionCards() async {
+    setState(() {
+      this._listviewChildrens = [Container(height: 40, child: Center(child: CircularProgressIndicator(),),)];
+    });
+
     questionCards = await getQuestionCards();
     List<Widget> _listviewChildrens = [
       Padding(
@@ -409,17 +424,39 @@ class _MainWidgetState extends State<MainWidget> {
 
     List<Widget> displayedCards = [];
 
-    if (myStates.selectedTopic != "All") {
+    if (myStates.selectedTopic != "All" && myStates.searchedQuestion == "") {
       for (Widget i in _listviewChildrens) {
         if (i is QuestionCard &&
             i.question.questionType == myStates.selectedTopic) {
           displayedCards.add(i);
         }
       }
+
+      return displayedCards;
+    } else if (myStates.selectedTopic != "All" &&
+        myStates.searchedQuestion != "") {
+      for (Widget i in _listviewChildrens) {
+        if (i is QuestionCard &&
+            i.question.questionType == myStates.selectedTopic &&
+            i.question.content.contains(myStates.searchedQuestion)) {
+          displayedCards.add(i);
+        }
+      }
+
+      return displayedCards;
+    } else if (myStates.selectedTopic == "All" &&
+        myStates.searchedQuestion == "") {
+      displayedCards = _listviewChildrens;
+      return displayedCards;
+    } else {
+      for (Widget i in _listviewChildrens) {
+        if (i is QuestionCard &&
+            i.question.content.contains(myStates.searchedQuestion)) {
+          displayedCards.add(i);
+        }
+      }
       return displayedCards;
     }
-
-    return _listviewChildrens;
   }
 
   List<TopicButton> getTopicButtons(BuildContext context) {
