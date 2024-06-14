@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:learnspace/Classes/Answer.dart';
 import 'package:learnspace/Classes/Comment.dart';
+import 'package:learnspace/Classes/Question.dart';
+import 'package:learnspace/pages/draftComment.dart';
 import 'package:learnspace/widgets/CommentPiece.dart';
 
 class AnswerPiece extends StatefulWidget {
   AnswerPiece({super.key});
 
+  late Question question;
+
   late Answer answer;
 
-  AnswerPiece.getAnswer(this.answer, {super.key});
+  AnswerPiece.getAnswer(this.question, this.answer, {super.key});
 
   @override
   State<AnswerPiece> createState() => _AnswerPieceState();
@@ -78,39 +82,6 @@ class _AnswerPieceState extends State<AnswerPiece> {
         ),
       ),
       Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0,20,0,10),
-            child: FFButtonWidget(
-                  onPressed: () {
-                    
-                  },
-                  text: 'Add Comment',
-                  options: FFButtonOptions(
-                    width: MediaQuery.sizeOf(context).width * 0.95,
-                    height: 30,
-                    padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
-                    iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                    color: FlutterFlowTheme.of(context).primary,
-                    textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                          fontFamily: 'Manrope',
-                          color: Colors.white,
-                          letterSpacing: 0,
-                          fontSize: 10,
-                        ),
-                    elevation: 3,
-                    borderSide: BorderSide(
-                      color: Colors.transparent,
-                      width: 1,
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-          ),
-        ],
-      ),
-      Row(
         mainAxisSize: MainAxisSize.max,
         children: [
           Expanded(
@@ -127,6 +98,44 @@ class _AnswerPieceState extends State<AnswerPiece> {
                         letterSpacing: 0,
                       ),
                 ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
+            child: FFButtonWidget(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => DraftCommentWidget.getAnswer(
+                          widget.question, widget.answer)),
+                );
+              },
+              text: 'Add Comment',
+              options: FFButtonOptions(
+                width: MediaQuery.sizeOf(context).width * 0.95,
+                height: 30,
+                padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
+                iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                color: FlutterFlowTheme.of(context).primary,
+                textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                      fontFamily: 'Manrope',
+                      color: Colors.white,
+                      letterSpacing: 0,
+                      fontSize: 10,
+                    ),
+                elevation: 3,
+                borderSide: BorderSide(
+                  color: Colors.transparent,
+                  width: 1,
+                ),
+                borderRadius: BorderRadius.circular(8),
               ),
             ),
           ),
@@ -158,9 +167,15 @@ class _AnswerPieceState extends State<AnswerPiece> {
 
     for (Comment c in widget.answer.comments) {
       CommentPiece cp = CommentPiece.getComment(c);
+      print(c.date);
       pieces.add(cp);
     }
+    
 
-    commentPieces = pieces;
+    pieces.sort((a, b) => a.comment.date.compareTo(b.comment.date));
+
+    setState(() {
+      commentPieces = pieces;
+    });
   }
 }

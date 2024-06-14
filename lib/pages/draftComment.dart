@@ -3,29 +3,31 @@ import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:learnspace/Classes/Answer.dart';
+import 'package:learnspace/Classes/Comment.dart';
 import 'package:learnspace/Classes/Question.dart';
 import 'package:learnspace/pages/QnA.dart';
 import 'package:learnspace/states.dart';
 import 'package:provider/provider.dart';
 
-class DraftAnswerWidget extends StatefulWidget {
+class DraftCommentWidget extends StatefulWidget {
+  late Answer answer;
   late Question question;
 
-  DraftAnswerWidget.getQuestion(this.question, {super.key});
+  DraftCommentWidget.getAnswer(this.question, this.answer, {super.key});
 
   @override
-  State<DraftAnswerWidget> createState() => _DraftAnswerWidgetState();
+  State<DraftCommentWidget> createState() => _DraftCommentWidgetState();
 }
 
-class _DraftAnswerWidgetState extends State<DraftAnswerWidget> {
-  late DraftAnswerModel _model;
+class _DraftCommentWidgetState extends State<DraftCommentWidget> {
+  late DraftCommentModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
-    _model = createModel(context, () => DraftAnswerModel());
+    _model = createModel(context, () => DraftCommentModel());
 
     _model.textController ??= TextEditingController();
     _model.textFieldFocusNode ??= FocusNode();
@@ -36,24 +38,6 @@ class _DraftAnswerWidgetState extends State<DraftAnswerWidget> {
     _model.dispose();
 
     super.dispose();
-  }
-
-  Widget _getAttachmentURL() {
-    if (widget.question.attachementURL != "") {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: Image.network(
-          widget.question.attachementURL,
-          width: 300,
-          height: 200,
-          fit: BoxFit.cover,
-        ),
-      );
-    } else {
-      return const SizedBox(
-        height: 0.1,
-      );
-    }
   }
 
   String _errorMessage = "";
@@ -84,7 +68,12 @@ class _DraftAnswerWidgetState extends State<DraftAnswerWidget> {
               size: 24,
             ),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        QuestionPageWidget.getQuestion(widget.question)),
+              );
             },
           ),
           actions: [
@@ -107,20 +96,25 @@ class _DraftAnswerWidgetState extends State<DraftAnswerWidget> {
                         return Center(child: CircularProgressIndicator());
                       });
 
-                  Answer sendingAnswer = Answer.getEmpty();
-                  sendingAnswer.setContent(_model.textController.text);
-                  sendingAnswer.setUser(myStates.currentUser);
-                  sendingAnswer.setQuestionID(widget.question.questionID);
+                  Comment uploadingComment = Comment.getEmpty();
+                  uploadingComment.setContent(_model.textController.text);
+                  uploadingComment.setAnswerID(widget.answer.answerID);
+                  uploadingComment.setUser(myStates.currentUser);
+                  uploadingComment.setQuestionID(widget.answer.questionID);
 
-                  await sendingAnswer.uploadAnswer();
-
+                  await uploadingComment.uploadComment();
+                  await widget.question.getOtherDataFromID();
 
                   Navigator.of(context).pop();
-
-                  Navigator.pop(context);
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            QuestionPageWidget.getQuestion(widget.question)),
+                  );
                 } else {
                   setState(() {
-                    _errorMessage = "Please enter an answer!";
+                    _errorMessage = "Please enter a comment!";
                   });
                 }
               },
@@ -165,7 +159,7 @@ class _DraftAnswerWidgetState extends State<DraftAnswerWidget> {
                                       padding: const EdgeInsets.fromLTRB(
                                           10, 15, 10, 0),
                                       child: Text(
-                                        widget.question.content,
+                                        widget.answer.content,
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
@@ -181,12 +175,6 @@ class _DraftAnswerWidgetState extends State<DraftAnswerWidget> {
                           ],
                         ),
                       ],
-                    ),
-                    Align(
-                      alignment: AlignmentDirectional(0, -1),
-                      child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
-                          child: _getAttachmentURL()),
                     ),
                     Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                       Padding(
@@ -205,7 +193,7 @@ class _DraftAnswerWidgetState extends State<DraftAnswerWidget> {
                         autofocus: true,
                         obscureText: false,
                         decoration: InputDecoration(
-                          labelText: 'Answer here...',
+                          labelText: 'Comment here...',
                           labelStyle:
                               FlutterFlowTheme.of(context).labelMedium.override(
                                     fontFamily: 'Manrope',
@@ -267,7 +255,7 @@ class _DraftAnswerWidgetState extends State<DraftAnswerWidget> {
   }
 }
 
-class DraftAnswerModel extends FlutterFlowModel<DraftAnswerWidget> {
+class DraftCommentModel extends FlutterFlowModel<DraftCommentWidget> {
   ///  State fields for stateful widgets in this page.
 
   final unfocusNode = FocusNode();

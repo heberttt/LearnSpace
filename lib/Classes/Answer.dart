@@ -14,6 +14,7 @@ class Answer {
   String answerID = "";
   LearnSpaceUser user = LearnSpaceUser();
   String questionID = "";
+  String date = "";
 
   Answer(this.answerID, this.questionID);
   Answer.getEmpty();
@@ -35,6 +36,7 @@ class Answer {
     Map<String, dynamic> answerDataMap =
         answerDoc.data() as Map<String, dynamic>;
 
+    date = answerDataMap['date'];
     setContent(answerDataMap['content']);
     user.setId(answerDataMap['userID']);
     await user.getOtherInfoFromUID();
@@ -87,7 +89,11 @@ class Answer {
   Future<void> uploadAnswer() async {
     final db = FirebaseFirestore.instance;
 
-    final data = {'content': content, 'userID': user.id};
+    DateTime now = DateTime.now();
+    
+    date = now.toString();
+
+    final data = {'content': content, 'userID': user.id, 'date' : date};
 
     DocumentReference mainDocRef = db.collection('questions').doc(questionID);
 

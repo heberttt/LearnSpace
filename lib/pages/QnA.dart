@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -33,7 +34,9 @@ class _QuestionPageWidgetState extends State<QuestionPageWidget> {
     _model = createModel(context, () => QuestionPageModel());
   }
 
-  void _updateQuestion() async {
+
+
+  Future<void> _updateQuestion() async {
     Question newQuestion = widget.question;
     await newQuestion.getOtherDataFromID();
 
@@ -190,11 +193,13 @@ class _QuestionPageWidgetState extends State<QuestionPageWidget> {
           ),
           FFButtonWidget(
             onPressed: () {
-              Navigator.pushReplacement(
+              Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => DraftAnswerWidget.getQuestion(widget.question)),
-                  );
+                  ).then((_) {
+                    _updateQuestion();
+                  });
             },
             text: 'Answer',
             options: FFButtonOptions(
@@ -281,10 +286,13 @@ class _QuestionPageWidgetState extends State<QuestionPageWidget> {
         ),
         body: SafeArea(
           top: true,
-          child: ListView(
-            padding: EdgeInsets.zero,
-            scrollDirection: Axis.vertical,
-            children: _getListViewChildren().divide(const SizedBox(height: 15)),
+          child: RefreshIndicator(
+            onRefresh: _updateQuestion,
+            child: ListView(
+              padding: EdgeInsets.zero,
+              scrollDirection: Axis.vertical,
+              children: _getListViewChildren().divide(const SizedBox(height: 15)),
+            ),
           ),
         ),
       ),
@@ -295,10 +303,11 @@ class _QuestionPageWidgetState extends State<QuestionPageWidget> {
     List<AnswerPiece> pieces = [];
 
     for (Answer a in widget.question.answers) {
-      AnswerPiece ap = AnswerPiece.getAnswer(a);
+      AnswerPiece ap = AnswerPiece.getAnswer(widget.question, a);
       pieces.add(ap);
-      print(a.content);
     }
+    
+    pieces.sort((b,a) => a.answer.date.compareTo(b.answer.date));
 
     answerPieces = pieces;
   }

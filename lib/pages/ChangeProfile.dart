@@ -63,7 +63,7 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
     context: context,
     builder: (context) {
       return AlertDialog(
-        content: CircularProgressIndicator(),
+        content: Center(child: CircularProgressIndicator()),
       );
     },
   );
