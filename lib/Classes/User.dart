@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:learnspace/Classes/Question.dart';
 
 class LearnSpaceUser {
   String id = "";
@@ -15,10 +16,26 @@ class LearnSpaceUser {
   int point = 0;
   int approval = 0;
 
+  List<String> savedQuestionIDs = [];
+
   LearnSpaceUser();
 
   Future<void> plusPoint(int addedPoint) async {
     point += addedPoint;
+    final db = FirebaseFirestore.instance;
+    final storageRef = FirebaseStorage.instance.ref();
+    try {
+      final profilePictureURLRef = db.collection("users").doc(id);
+      await profilePictureURLRef.update({"point": "$point"}).then(
+          (value) => print("DocumentSnapshot successfully updated!"),
+          onError: (e) => print("Error updating document $e"));
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> minusPoint(int addedPoint) async {
+    point -= addedPoint;
     final db = FirebaseFirestore.instance;
     final storageRef = FirebaseStorage.instance.ref();
     try {
@@ -57,6 +74,19 @@ class LearnSpaceUser {
     setProfilePictureURL(userDataMap['profile_picture_url']);
     setRole(userDataMap['role']);
     setPoint(int.parse(userDataMap['point']));
+
+    CollectionReference savedQuestionIDsRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(id)
+        .collection('saved');
+
+    QuerySnapshot savedQuestionIDsQuery = await savedQuestionIDsRef.get();
+
+    List<String> gotSavedQuestionIDs = [];
+    for (QueryDocumentSnapshot doc in savedQuestionIDsQuery.docs) {
+      gotSavedQuestionIDs.add(doc.id);
+    }
+    savedQuestionIDs = gotSavedQuestionIDs;
   }
 
   Future<void> updateUsername(String newName) async {

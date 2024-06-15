@@ -1,10 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:learnspace/Classes/User.dart';
+import 'package:learnspace/Classes/Voucher.dart';
+import 'package:learnspace/states.dart';
 import 'package:provider/provider.dart';
 
 class ShoppingPageWidget extends StatefulWidget {
-  const ShoppingPageWidget({super.key});
+  late LearnSpaceUser user;
+
+  ShoppingPageWidget.getUser(this.user, {super.key});
 
   @override
   State<ShoppingPageWidget> createState() => _ShoppingPageWidgetState();
@@ -18,6 +24,8 @@ class _ShoppingPageWidgetState extends State<ShoppingPageWidget>
 
   @override
   void initState() {
+    _fetchVoucherCard();
+    _fetchPurchasedVoucherCard();
     super.initState();
     _model = createModel(context, () => ShoppingPageModel());
 
@@ -35,8 +43,101 @@ class _ShoppingPageWidgetState extends State<ShoppingPageWidget>
     super.dispose();
   }
 
+  List<VoucherCard> _displayedVoucherCards = [];
+  List<PurchasedVoucherCard> _displayedPurchasedVoucherCards = [];
+
+  Future<List<String>> _getVoucherCardIDs() async {
+    List<String> voucherIDs = [];
+
+    try {
+      // Reference to your Firestore collection
+      CollectionReference collectionRef =
+          FirebaseFirestore.instance.collection('vouchers');
+
+      // Fetch all documents in the collection
+      QuerySnapshot querySnapshot = await collectionRef.get();
+
+      // Iterate through each document and add the document ID to the list
+      for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+        voucherIDs.add(doc.id);
+      }
+    } catch (e) {
+      print("Error fetching document IDs: $e");
+    }
+
+    return voucherIDs;
+  }
+
+  Future<void> _fetchVoucherCard() async {
+    var fetchedCards = await _getVoucherCards();
+    setState(() {
+      _displayedVoucherCards = fetchedCards;
+    });
+  }
+
+  Future<void> _fetchPurchasedVoucherCard() async {
+    var fetchedCards = await _getPurchasedVoucherCards();
+    print(fetchedCards.length);
+    setState(() {
+      _displayedPurchasedVoucherCards = fetchedCards;
+    });
+  }
+
+  Future<List<VoucherCard>> _getVoucherCards() async {
+    List<String> voucherIDs = await _getVoucherCardIDs();
+    List<VoucherCard> gotVoucherCard = [];
+
+    for (String id in voucherIDs) {
+      Voucher voucher = Voucher(id);
+      await voucher.getOtherDataFromID();
+      int voucherLeft = await voucher.getFreeVoucherAmount();
+      gotVoucherCard.add(VoucherCard.getVoucher(voucher, voucherLeft));
+    }
+
+    return gotVoucherCard;
+  }
+
+  Future<List<PurchasedVoucherCard>> _getPurchasedVoucherCards() async {
+    List<String> voucherCodes = await _getPurchasedVoucherCardCodes();
+    List<PurchasedVoucherCard> gotVoucherCard = [];
+
+    for (String code in voucherCodes) {
+      Voucher voucher = Voucher.getEmpty();
+      voucher.code = code;
+      await voucher.getPurchasedOtherDataFromID(widget.user);
+      gotVoucherCard.add(PurchasedVoucherCard.getVoucher(voucher));
+    }
+
+    return gotVoucherCard;
+  }
+
+  Future<List<String>> _getPurchasedVoucherCardCodes() async {
+    List<String> voucherCodes = [];
+
+    try {
+      // Reference to your Firestore collection
+      CollectionReference collectionRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.user.id)
+          .collection("vouchers");
+
+      // Fetch all documents in the collection
+      QuerySnapshot querySnapshot = await collectionRef.get();
+
+      // Iterate through each document and add the document ID to the list
+      for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+        voucherCodes.add(doc.id);
+      }
+    } catch (e) {
+      print("Error fetching document IDs: $e");
+    }
+
+    return voucherCodes;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final myStates = Provider.of<MyStates>(context);
     return GestureDetector(
       onTap: () => _model.unfocusNode.canRequestFocus
           ? FocusScope.of(context).requestFocus(_model.unfocusNode)
@@ -63,7 +164,7 @@ class _ShoppingPageWidgetState extends State<ShoppingPageWidget>
             },
           ),
           title: Text(
-            'Your points: 500',
+            'Your points: ${myStates.currentUser.point}',
             textAlign: TextAlign.start,
             style: FlutterFlowTheme.of(context).bodyMedium.override(
                   fontFamily: 'Manrope',
@@ -124,7 +225,7 @@ class _ShoppingPageWidgetState extends State<ShoppingPageWidget>
                                   primary: false,
                                   shrinkWrap: true,
                                   scrollDirection: Axis.vertical,
-                                  children: [VoucherCard()]
+                                  children: _displayedVoucherCards
                                       .divide(SizedBox(height: 10)),
                                 ),
                               ],
@@ -139,7 +240,7 @@ class _ShoppingPageWidgetState extends State<ShoppingPageWidget>
                                 primary: false,
                                 shrinkWrap: true,
                                 scrollDirection: Axis.vertical,
-                                children: [PurchasedVoucherCard()]
+                                children: _displayedPurchasedVoucherCards
                                     .divide(SizedBox(height: 10)),
                               ),
                             ],
@@ -159,13 +260,25 @@ class _ShoppingPageWidgetState extends State<ShoppingPageWidget>
 }
 
 class PurchasedVoucherCard extends StatefulWidget {
-  const PurchasedVoucherCard({super.key});
+  PurchasedVoucherCard({super.key});
+
+  late Voucher voucher;
+
+  PurchasedVoucherCard.getVoucher(this.voucher, {super.key});
 
   @override
   State<PurchasedVoucherCard> createState() => _PurchasedVoucherCardState();
 }
 
 class _PurchasedVoucherCardState extends State<PurchasedVoucherCard> {
+  String _getCode() {
+    if (widget.voucher.isRedeemed == true) {
+      return "Code Redeemed";
+    } else {
+      return widget.voucher.code;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -191,7 +304,7 @@ class _PurchasedVoucherCardState extends State<PurchasedVoucherCard> {
                     shape: BoxShape.circle,
                   ),
                   child: Image.network(
-                    'https://picsum.photos/seed/237/600',
+                    widget.voucher.voucherProfileLink,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -200,7 +313,7 @@ class _PurchasedVoucherCardState extends State<PurchasedVoucherCard> {
                 child: Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(30, 0, 0, 0),
                   child: Text(
-                    '20 RM Bila-BIla Voucher',
+                    widget.voucher.title,
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
                           fontFamily: 'Manrope',
                           fontSize: 20,
@@ -219,8 +332,8 @@ class _PurchasedVoucherCardState extends State<PurchasedVoucherCard> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 FFButtonWidget(
-                  onPressed: null,
-                  text: 'Zhay7AEKaiaLls--KS',
+                  onPressed: () {},
+                  text: _getCode(),
                   options: FFButtonOptions(
                     width: MediaQuery.sizeOf(context).width * 0.9,
                     height: 40,
@@ -250,13 +363,71 @@ class _PurchasedVoucherCardState extends State<PurchasedVoucherCard> {
 }
 
 class VoucherCard extends StatefulWidget {
-  const VoucherCard({super.key});
+  VoucherCard({super.key});
 
+  late Voucher voucher;
+  late int voucherLeft;
+  VoucherCard.getVoucher(this.voucher, this.voucherLeft, {super.key});
   @override
   State<VoucherCard> createState() => _VoucherCardState();
 }
 
 class _VoucherCardState extends State<VoucherCard> {
+  Future<void> _purchase(BuildContext context) async {
+    final myStates = Provider.of<MyStates>(context, listen: false);
+    int vleft = await widget.voucher.getFreeVoucherAmount();
+    if (vleft > 0) {
+      if (myStates.currentUser.point < widget.voucher.price) {
+        showDialog(
+            context: context,
+            builder: (_) => AlertDialog(
+                  title: const Text('Not enough balance'),
+                  content: Text(
+                    'Your balance is not enough: ${myStates.currentUser.point}',
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        textStyle: Theme.of(context).textTheme.labelLarge,
+                      ),
+                      child: const Text('OK'),
+                      onPressed: () {
+                        print("object");
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ));
+      } else {
+        widget.voucher.purchaseVoucher(myStates.currentUser);
+        myStates.minusPointCurrentUser(widget.voucher.price);
+        setState(() {
+          widget.voucherLeft--; 
+        });
+      }
+    } else {
+      showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+                title: const Text('No voucher available'),
+                content: const Text(
+                  'There are no voucher currently available to be purchased',
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      textStyle: Theme.of(context).textTheme.labelLarge,
+                    ),
+                    child: const Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -284,7 +455,7 @@ class _VoucherCardState extends State<VoucherCard> {
                       shape: BoxShape.circle,
                     ),
                     child: Image.network(
-                      'https://picsum.photos/seed/237/600',
+                      widget.voucher.voucherProfileLink,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -293,7 +464,7 @@ class _VoucherCardState extends State<VoucherCard> {
                   child: Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(30, 0, 0, 0),
                     child: Text(
-                      '20 RM Bila-BIla Voucher',
+                      widget.voucher.title,
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                             fontFamily: 'Manrope',
                             fontSize: 20,
@@ -312,7 +483,7 @@ class _VoucherCardState extends State<VoucherCard> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text(
-                    'Price: 200 points',
+                    'Price: ${widget.voucher.price} points',
                     textAlign: TextAlign.start,
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
                           fontFamily: 'Manrope',
@@ -329,7 +500,7 @@ class _VoucherCardState extends State<VoucherCard> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text(
-                    'Available voucher left: 10',
+                    'Available voucher left: ${widget.voucherLeft}',
                     textAlign: TextAlign.start,
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
                           fontFamily: 'Manrope',
@@ -347,7 +518,30 @@ class _VoucherCardState extends State<VoucherCard> {
                 children: [
                   FFButtonWidget(
                     onPressed: () {
-                      print('Button pressed ...');
+                      showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                                title: const Text('Purchase Voucher'),
+                                content: Text(
+                                    'Are you sure you would like to puchase "${widget.voucher.title}"?'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context, 'Cancel');
+                                    },
+                                    child: const Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      _purchase(context);
+
+                                      Navigator.pop(context, 'Purchase');
+                                    },
+                                    child: const Text('Purchase'),
+                                  ),
+                                ],
+                              ),
+                          barrierDismissible: true);
                     },
                     text: 'Purchase',
                     options: FFButtonOptions(

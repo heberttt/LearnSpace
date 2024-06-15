@@ -8,6 +8,7 @@ import 'package:learnspace/Classes/Question.dart';
 import 'package:learnspace/pages/LoginUI.dart';
 import 'package:learnspace/pages/Profile.dart';
 import 'package:learnspace/pages/QnA.dart';
+import 'package:learnspace/states.dart';
 import 'package:learnspace/widgets/SearchBar.dart';
 import 'package:provider/provider.dart';
 import '../Classes/User.dart';
@@ -27,6 +28,16 @@ class _QuestionCardState extends State<QuestionCard> {
   @override
   void initState() {
     super.initState();
+  }
+
+  bool _toggleValue(BuildContext context) {
+    final myStates = Provider.of<MyStates>(context);
+    if (myStates.currentUser.savedQuestionIDs
+        .contains(widget.question.questionID)) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   @override
@@ -83,7 +94,6 @@ class _QuestionCardState extends State<QuestionCard> {
                       child: Image.network(
                         widget.question.user.profilePictureUrl,
                         fit: BoxFit.cover,
-                        
                       ),
                     ),
                   ),
@@ -170,12 +180,14 @@ class _QuestionCardState extends State<QuestionCard> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => QuestionPageWidget.getQuestion(widget.question)),
+                            builder: (context) =>
+                                QuestionPageWidget.getQuestion(
+                                    widget.question)),
                       );
                     },
                     text: 'Answer',
                     options: FFButtonOptions(
-                      width: MediaQuery.sizeOf(context).width * 0.7,
+                      width: MediaQuery.sizeOf(context).width * 0.6,
                       height: 40,
                       padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
                       iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
@@ -230,6 +242,20 @@ class _QuestionCardState extends State<QuestionCard> {
                           ],
                         ),
                       ],
+                    ),
+                  ),
+                  ToggleIcon(
+                    onPressed: () async {},
+                    value: _toggleValue(context),
+                    onIcon: Icon(
+                      Icons.bookmark,
+                      color: FlutterFlowTheme.of(context).primary,
+                      size: 25,
+                    ),
+                    offIcon: Icon(
+                      Icons.bookmark_border,
+                      color: FlutterFlowTheme.of(context).secondaryText,
+                      size: 25,
                     ),
                   ),
                 ].divide(SizedBox(width: 10)),

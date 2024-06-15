@@ -205,7 +205,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  ShoppingPageWidget()),
+                                  ShoppingPageWidget.getUser(widget.user)),
                         );
                       },
                       text: 'Vouchers',

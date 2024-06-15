@@ -41,6 +41,12 @@ class MyStates with ChangeNotifier {
     notifyListeners();
   }
 
+  void minusPointCurrentUser(int point) {
+    currentUser.point -= point;
+    currentUser.minusPoint(currentUser.point); 
+    notifyListeners();
+  }
+
   Future<void> getTopics() async {
     List<String> topics = [];
     try {
