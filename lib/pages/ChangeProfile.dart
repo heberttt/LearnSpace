@@ -59,20 +59,72 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
   }
 
   void _changePassword(String password, BuildContext context) async {
-    showDialog(
+    String oldPassword = _model.textController3.text;
+
+    if (password.length < 6) {
+      showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+                title: const Text('Password too short'),
+                content: const Text(
+                  'Your password is too short',
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      textStyle: Theme.of(context).textTheme.labelLarge,
+                    ),
+                    child: const Text('OK'),
+                    onPressed: () {
+                      print("object");
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ));
+
+      return;
+    }
+
+    
+
+    try {
+      showDialog(
       barrierDismissible: false,
       context: context,
       builder: (context) {
         return AlertDialog(
-          content: Center(child: CircularProgressIndicator()),
+          content: CircularProgressIndicator(),
         );
       },
     );
-    String oldPassword = _model.textController3.text;
+      final userCredentials = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+              email: widget.user.email, password: oldPassword);
+    } catch (e) {
+      Navigator.pop(context);
+      showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+                title: const Text('Something went wrong'),
+                content: const Text(
+                  'Wrong password!',
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      textStyle: Theme.of(context).textTheme.labelLarge,
+                    ),
+                    child: const Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ));
 
-    final userCredentials = await FirebaseAuth.instance
-        .signInWithEmailAndPassword(
-            email: widget.user.email, password: oldPassword);
+      return;
+    }
 
     //Create an instance of the current user.
     var user = FirebaseAuth.instance.currentUser!;
