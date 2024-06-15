@@ -54,6 +54,13 @@ class Question {
     this.answers = answers;
   }
 
+
+  void deleteQuestion(){
+    final db = FirebaseFirestore.instance;
+
+    db.collection('questions').doc(questionID).delete();
+  }
+
   Future<void> uploadQuestionWithoutAttachment(
       LearnSpaceUser uploadingUser) async {
     final db = FirebaseFirestore.instance;

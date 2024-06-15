@@ -155,7 +155,7 @@ class _MyQuestionsWidgetState extends State<MyQuestionsWidget> {
             },
           ),
           title: Text(
-            'Saved Questions',
+            'My Questions',
             style: FlutterFlowTheme.of(context).bodyMedium.override(
                   fontFamily: 'Manrope',
                   color: Colors.white,

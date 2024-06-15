@@ -102,6 +102,12 @@ class _SavedQuestionsWidgetState extends State<SavedQuestionsWidget> {
 
     _listviewChildrens.addAll(questionCards);
 
+    if (questionCards.isEmpty){
+      _listviewChildrens.add(
+        Center(child: const Text("You haven't saved any questions yet."))
+      );
+    }
+
     setState(() {
       this._listviewChildrens = _listviewChildrens;
     });

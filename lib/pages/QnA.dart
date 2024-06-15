@@ -28,6 +28,10 @@ class _QuestionPageWidgetState extends State<QuestionPageWidget> {
 
   List<AnswerPiece> answerPieces = [];
 
+  List<Widget> _actionChildren = [];
+
+
+
   @override
   void initState() {
     _updateQuestion();
@@ -54,6 +58,13 @@ class _QuestionPageWidgetState extends State<QuestionPageWidget> {
   Widget _getAnswerButton(BuildContext context) {
     final myStates = Provider.of<MyStates>(context);
     if(widget.question.user.id == myStates.currentUser.id){
+      setState(() {
+        _actionChildren = [
+          IconButton(onPressed: (){
+            widget.question.deleteQuestion();
+          }, icon: const Icon(Icons.delete, color: Colors.white,))
+        ];
+      });
       return FFButtonWidget(
         onPressed: () {
           Navigator.push(
@@ -356,9 +367,10 @@ class _QuestionPageWidgetState extends State<QuestionPageWidget> {
               Navigator.pop(context);
             },
           ),
-          actions: [],
+          actions: _actionChildren,
           centerTitle: false,
           elevation: 2,
+          
         ),
         body: SafeArea(
           top: true,
