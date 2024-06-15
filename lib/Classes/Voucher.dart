@@ -54,7 +54,7 @@ class Voucher {
     voucherID = voucherDataMap['parentVoucherID'];
     isRedeemed = voucherDataMap['isRedeemed'];
 
-    getOtherDataFromID();
+    await getOtherDataFromID();
   }
 
   Future<int> getFreeVoucherAmount() async {

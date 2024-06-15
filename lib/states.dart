@@ -46,21 +46,18 @@ class MyStates with ChangeNotifier {
 
   void minusPointCurrentUser(int point) {
     currentUser.point -= point;
-    currentUser.minusPoint(currentUser.point); 
+    currentUser.minusPoint(point); 
     notifyListeners();
   }
 
   Future<void> getTopics() async {
     List<String> topics = [];
     try {
-      // Reference to your Firestore collection
       CollectionReference collectionRef =
           FirebaseFirestore.instance.collection('questionType');
 
-      // Fetch all documents in the collection
       QuerySnapshot querySnapshot = await collectionRef.get();
 
-      // Iterate through each document and add the document ID to the list
       for (QueryDocumentSnapshot doc in querySnapshot.docs) {
         if (doc.id == 'Others') {
           continue;

@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:dart_openai/dart_openai.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:flutter/material.dart';
@@ -310,7 +310,7 @@ class _DraftPostWidgetState extends State<DraftPostWidget> {
                             padding:
                                 EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
                             child: FFButtonWidget(
-                              onPressed: () {
+                              onPressed: () async {
                                 if (selectedTopic == null) {
                                   setState(() {
                                     _errorMessage = "Please choose a topic!";
@@ -335,8 +335,9 @@ class _DraftPostWidgetState extends State<DraftPostWidget> {
                                   uploadingQuestion
                                       .setQuestionType(selectedTopic!);
 
-                                  uploadingQuestion.uploadQuestion(
+                                  await uploadingQuestion.uploadQuestion(
                                       myStates.currentUser, image);
+
 
                                   Navigator.pop(context);
                                 } else {
@@ -351,9 +352,10 @@ class _DraftPostWidgetState extends State<DraftPostWidget> {
                                   uploadingQuestion
                                       .setQuestionType(selectedTopic!);
 
-                                  uploadingQuestion
+                                  await uploadingQuestion
                                       .uploadQuestionWithoutAttachment(
                                           myStates.currentUser);
+
 
                                   Navigator.pop(context);
                                 }

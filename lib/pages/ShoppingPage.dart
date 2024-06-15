@@ -77,11 +77,11 @@ class _ShoppingPageWidgetState extends State<ShoppingPageWidget>
 
   Future<void> _fetchPurchasedVoucherCard() async {
     var fetchedCards = await _getPurchasedVoucherCards();
-    print(fetchedCards.length);
     setState(() {
       _displayedPurchasedVoucherCards = fetchedCards;
     });
   }
+
 
   Future<List<VoucherCard>> _getVoucherCards() async {
     List<String> voucherIDs = await _getVoucherCardIDs();
@@ -231,19 +231,24 @@ class _ShoppingPageWidgetState extends State<ShoppingPageWidget>
                               ],
                             ),
                           ),
-                          ListView(
-                            padding: EdgeInsets.zero,
-                            scrollDirection: Axis.vertical,
-                            children: [
-                              ListView(
-                                padding: EdgeInsets.zero,
-                                primary: false,
-                                shrinkWrap: true,
-                                scrollDirection: Axis.vertical,
-                                children: _displayedPurchasedVoucherCards
-                                    .divide(SizedBox(height: 10)),
-                              ),
-                            ],
+                          RefreshIndicator(
+                            onRefresh: () async {
+                              _fetchPurchasedVoucherCard();
+                            },
+                            child: ListView(
+                              padding: EdgeInsets.zero,
+                              scrollDirection: Axis.vertical,
+                              children: [
+                                ListView(
+                                  padding: EdgeInsets.zero,
+                                  primary: false,
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.vertical,
+                                  children: _displayedPurchasedVoucherCards
+                                      .divide(SizedBox(height: 10)),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
@@ -392,7 +397,6 @@ class _VoucherCardState extends State<VoucherCard> {
                       ),
                       child: const Text('OK'),
                       onPressed: () {
-                        print("object");
                         Navigator.of(context).pop();
                       },
                     ),

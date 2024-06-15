@@ -201,7 +201,7 @@ class _QuestionCardState extends State<QuestionCard> {
                 children: [
                   FFButtonWidget(
                     onPressed: () async {
-                      Navigator.push(
+                      await Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) =>

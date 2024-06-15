@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:dart_openai/dart_openai.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -54,6 +54,42 @@ class Question {
     this.answers = answers;
   }
 
+  Future<void> getAnswerFromChatGPT() async {
+    
+    String prompt = "The topic is about: $questionType, $content";
+
+    if(questionType == 'Others'){
+      prompt = content;
+    }
+
+    OpenAI.apiKey = "sk-learnspacegpt-3XTQPaBpz3hCpdFvwbEaT3BlbkFJAZFDfncWMI5vC23PT0QF";
+
+    final completion = await OpenAI.instance.completion.create(
+    model: "gpt-3.5-turbo-instruct",
+    prompt: prompt,
+    maxTokens: 250
+  );
+
+    Answer chatGPTAnswer = Answer.getEmpty();
+
+    LearnSpaceUser chatgptUser = LearnSpaceUser();
+    chatgptUser.id = 'chatgpt';
+    
+    chatgptUser.getOtherInfoFromUID();
+
+    chatGPTAnswer.user = chatgptUser;
+    chatGPTAnswer.questionID = questionID;
+
+    for(var t in completion.choices){
+      print(t.text);
+    }
+    chatGPTAnswer.content = completion.choices[0].text;
+
+    print(chatGPTAnswer.content);
+
+    chatGPTAnswer.uploadAnswer();
+    
+  }
 
   void deleteQuestion(){
     final db = FirebaseFirestore.instance;
@@ -83,6 +119,8 @@ class Question {
     await db.collection("questions").add(data).then((documentSnapshot) {
       questionID = documentSnapshot.id;
     });
+
+    getAnswerFromChatGPT();
   }
 
   bool checkIfAnsweredBefore(LearnSpaceUser checkingUser) {
@@ -119,6 +157,8 @@ class Question {
     await db.collection("questions").add(data).then((documentSnapshot) {
       questionID = documentSnapshot.id;
     });
+
+    getAnswerFromChatGPT();
 
     final storageRef = FirebaseStorage.instance.ref();
     final mountainsRef = storageRef.child("$questionID.jpg");

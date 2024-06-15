@@ -62,6 +62,10 @@ class _QuestionPageWidgetState extends State<QuestionPageWidget> {
         _actionChildren = [
           IconButton(onPressed: (){
             widget.question.deleteQuestion();
+            Navigator.pop(context);
+
+            
+
           }, icon: const Icon(Icons.delete, color: Colors.white,))
         ];
       });
