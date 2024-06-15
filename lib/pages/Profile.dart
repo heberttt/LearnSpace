@@ -1,9 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:learnspace/Classes/User.dart';
 import 'package:learnspace/pages/ChangeProfile.dart';
+import 'package:learnspace/pages/LoginUI.dart';
+import 'package:learnspace/pages/MyQuestions.dart';
+import 'package:learnspace/pages/SavedQuestions.dart';
 import 'package:learnspace/pages/ShoppingPage.dart';
 import 'package:learnspace/states.dart';
 import 'package:provider/provider.dart';
@@ -231,9 +235,15 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                     ),
                     FFButtonWidget(
                       onPressed: () {
-                        print('Button pressed ...');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  SavedQuestionsWidget.getUser(widget.user)),
+                        );
                       },
-                      text: 'Button',
+                      text: 'Saved Questions',
+                      icon: Icon(Icons.bookmark),
                       options: FFButtonOptions(
                         width: MediaQuery.sizeOf(context).width,
                         height: 60,
@@ -256,9 +266,15 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                     ),
                     FFButtonWidget(
                       onPressed: () {
-                        print('Button pressed ...');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  MyQuestionsWidget.getUser(widget.user)),
+                        );
                       },
-                      text: 'Button',
+                      icon: Icon(Icons.chat_bubble),
+                      text: 'My Questions',
                       options: FFButtonOptions(
                         width: MediaQuery.sizeOf(context).width,
                         height: 60,
@@ -280,10 +296,16 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                       ),
                     ),
                     FFButtonWidget(
+                      icon: const Icon(Icons.logout),
                       onPressed: () {
-                        print('Button pressed ...');
+                        FirebaseAuth.instance.signOut();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const LoginUIWidget()),
+                        );
                       },
-                      text: 'Button',
+                      text: 'Log out',
                       options: FFButtonOptions(
                         width: MediaQuery.sizeOf(context).width,
                         height: 60,

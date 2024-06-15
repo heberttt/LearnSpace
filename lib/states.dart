@@ -13,6 +13,9 @@ class MyStates with ChangeNotifier {
   List<String> topics = [];
 
   LearnSpaceUser currentUser = LearnSpaceUser();
+  List<String> savedQuestionIDsByCurrentUser = [];
+
+ 
 
   String searchedQuestion = "";
 

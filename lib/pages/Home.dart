@@ -1,3 +1,5 @@
+
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
@@ -20,7 +22,6 @@ class Home extends StatefulWidget {
 
   Home.getUser2(String userUID, {super.key}) {
     user.setId(userUID);
-    user.getOtherInfoFromUID();
   }
 
   Home.getUser(this.user, {super.key});
@@ -68,6 +69,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
+    widget.user.getOtherInfoFromUID();
     super.initState();
     LearnSpaceUser _user = widget.user;
     _widgetOptions = [
@@ -330,6 +332,30 @@ class _MainWidgetState extends State<MainWidget> with AutomaticKeepAliveClientMi
   @override
   bool get wantKeepAlive => true;
 
+  List<String> _rulesChildren = [''];
+
+  Future<void> _fetchRules() async {
+    final db = FirebaseFirestore.instance;
+
+     DocumentSnapshot ds = await db.collection('rules').doc('1').get();
+
+    
+
+     List<String> rules =  List<String>.from(ds['rules']);
+
+    List<String> orderedRules = [];
+
+    int i = 0;
+    for(String rule in rules){
+      i++;
+      orderedRules.add("$i. $rule");
+    }
+
+     setState(() {
+       _rulesChildren = orderedRules;
+     });
+  }
+
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   List<QuestionCard> questionCards = [];
@@ -372,6 +398,7 @@ class _MainWidgetState extends State<MainWidget> with AutomaticKeepAliveClientMi
 
   @override
   void initState() {
+    _fetchRules();
     _fetchQuestionCards();
     super.initState();
     _model = createModel(context, () => MainModel());
@@ -396,7 +423,7 @@ class _MainWidgetState extends State<MainWidget> with AutomaticKeepAliveClientMi
       Padding(
         padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
         child: FlutterFlowDropDown(
-          options: [widget.user.email, 'Rule 2:'],
+          options: _rulesChildren,
           onChanged: (val) => setState(() => _model.dropDownValue = val),
           width: MediaQuery.sizeOf(context).width * 0.95,
           height: 30,
@@ -521,23 +548,26 @@ class _MainWidgetState extends State<MainWidget> with AutomaticKeepAliveClientMi
           key: scaffoldKey,
           backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
           appBar: AppBar(
+            centerTitle: true,
             backgroundColor: FlutterFlowTheme.of(context).primary,
             automaticallyImplyLeading: false,
-            leading: FlutterFlowIconButton(
-              borderColor: FlutterFlowTheme.of(context).primary,
-              borderRadius: 20,
-              borderWidth: 1,
-              buttonSize: 40,
-              fillColor: FlutterFlowTheme.of(context).accent1,
-              icon: Icon(
-                Icons.table_rows_rounded,
-                color: FlutterFlowTheme.of(context).primaryText,
-                size: 24,
+            leading: Visibility(
+              visible: false,
+              child: FlutterFlowIconButton(
+                borderColor: FlutterFlowTheme.of(context).primary,
+                borderRadius: 20,
+                borderWidth: 1,
+                buttonSize: 40,
+                fillColor: FlutterFlowTheme.of(context).accent1,
+                icon: Icon(
+                  Icons.table_rows_rounded,
+                  color: FlutterFlowTheme.of(context).primaryText,
+                  size: 24,
+                ),
+                onPressed: () {
+                  widget.Skey.currentState!.openDrawer();
+                },
               ),
-              onPressed: () {
-                widget.Skey.currentState!.openDrawer();
-                print("Open drawer!");
-              },
             ),
             title: Text(
               'Home',
@@ -549,7 +579,6 @@ class _MainWidgetState extends State<MainWidget> with AutomaticKeepAliveClientMi
                   ),
             ),
             actions: [],
-            centerTitle: false,
             elevation: 2,
           ),
           body: SafeArea(

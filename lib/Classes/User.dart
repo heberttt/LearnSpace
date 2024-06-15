@@ -78,7 +78,7 @@ class LearnSpaceUser {
     CollectionReference savedQuestionIDsRef = FirebaseFirestore.instance
         .collection('users')
         .doc(id)
-        .collection('saved');
+        .collection('savedQuestions');
 
     QuerySnapshot savedQuestionIDsQuery = await savedQuestionIDsRef.get();
 
@@ -87,7 +87,39 @@ class LearnSpaceUser {
       gotSavedQuestionIDs.add(doc.id);
     }
     savedQuestionIDs = gotSavedQuestionIDs;
+
   }
+
+
+  void addSavedQuestionID(String questionID){
+    savedQuestionIDs.add(questionID);
+
+    final db = FirebaseFirestore.instance;
+
+    final data = {'1' : 1};
+
+    db.collection('users')
+        .doc(id)
+        .collection("savedQuestions")
+        .doc(questionID)
+        .set(data);
+    
+  }
+
+  void deleteSavedQuestionID(String questionID){
+    savedQuestionIDs.remove(questionID);
+    try {
+    FirebaseFirestore.instance.collection('users').doc(id).collection('savedQuestions').doc(questionID).delete();
+      
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void removeSavedQuestionID(String questionID){
+    savedQuestionIDs.remove(questionID);
+  }
+
 
   Future<void> updateUsername(String newName) async {
     final db = FirebaseFirestore.instance;

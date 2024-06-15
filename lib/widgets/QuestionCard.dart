@@ -18,8 +18,9 @@ class QuestionCard extends StatefulWidget {
 
   Question question = Question("");
 
-  QuestionCard.getQuestion(this.question, {super.key});
+  bool _toggleValue = false;
 
+  QuestionCard.getQuestion(this.question, {super.key});
   @override
   State<QuestionCard> createState() => _QuestionCardState();
 }
@@ -30,18 +31,41 @@ class _QuestionCardState extends State<QuestionCard> {
     super.initState();
   }
 
-  bool _toggleValue(BuildContext context) {
+
+  void _getToggleValue(BuildContext context) {
     final myStates = Provider.of<MyStates>(context);
+
     if (myStates.currentUser.savedQuestionIDs
         .contains(widget.question.questionID)) {
-      return true;
+      setState(() {
+        widget._toggleValue = true;
+      });
+    }
+  }
+
+  void _pressToggleIcon(BuildContext context) {
+    final myStates = Provider.of<MyStates>(context);
+
+
+    if (widget._toggleValue) {
+      setState(() {
+        widget._toggleValue = false;
+      });
     } else {
-      return false;
+      setState(() {
+        widget._toggleValue = true;
+      });
+
+      setState(() {
+        widget._toggleValue = true;
+      });
+      //myStates.currentUser.addSavedQuestionID(widget.question.questionID);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    _getToggleValue(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(3, 0, 3, 0),
       child: Card(
@@ -245,8 +269,23 @@ class _QuestionCardState extends State<QuestionCard> {
                     ),
                   ),
                   ToggleIcon(
-                    onPressed: () async {},
-                    value: _toggleValue(context),
+                    onPressed: () {
+                      final myStates = Provider.of<MyStates>(context, listen: false);
+                      if(!widget._toggleValue){
+                        myStates.currentUser.addSavedQuestionID(widget.question.questionID);
+                      }else{
+                        myStates.currentUser.deleteSavedQuestionID(widget.question.questionID);
+                      }
+                      setState(() {
+                        widget._toggleValue = !widget._toggleValue;
+                      });
+                      
+                      
+                      
+                      
+                      
+                    },
+                    value: widget._toggleValue,
                     onIcon: Icon(
                       Icons.bookmark,
                       color: FlutterFlowTheme.of(context).primary,
