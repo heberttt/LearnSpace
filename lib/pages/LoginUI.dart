@@ -104,6 +104,7 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
 
     _model.textController2 ??= TextEditingController();
     _model.textFieldFocusNode2 ??= FocusNode();
+
   }
 
   @override
@@ -367,13 +368,13 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
                               child: FFButtonWidget(
                                 onPressed: () {
 
-                                  _signInWithEmail("robotest@gmail.com", "robotest");
-                                  // String enteredEmail =
-                                  //     _model.textController1.text;
-                                  // String enteredPassword =
-                                  //     _model.textController2.text;
+                                  
+                                  String enteredEmail =
+                                      _model.textController1.text;
+                                  String enteredPassword =
+                                      _model.textController2.text;
                 
-                                  // _signInWithEmail(enteredEmail, enteredPassword);
+                                  _signInWithEmail(enteredEmail, enteredPassword);
                                 },
                                 text: _signInStatus(),
                                 options: FFButtonOptions(
