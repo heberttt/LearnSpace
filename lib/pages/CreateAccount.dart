@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -541,48 +543,57 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                     ],
                   ),
                 ),
-                Opacity(
-                  opacity: 0.3,
-                  child: Divider(
-                    thickness: 1,
-                    color: FlutterFlowTheme.of(context).secondary,
-                  ),
-                ),
-                Opacity(
-                  opacity: 0.5,
-                  child: Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 20),
-                    child: Text(
-                      'or Register with:',
-                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Manrope',
-                            letterSpacing: 0,
-                          ),
+                Visibility(
+                  visible: false,
+                  child: Opacity(
+                    opacity: 0.3,
+                    child: Divider(
+                      thickness: 1,
+                      color: FlutterFlowTheme.of(context).secondary,
                     ),
                   ),
                 ),
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      icon: Image.asset(
-                        "assets/images/Google_Logo.png",
-                        height: 30,
+                Visibility(
+                  visible: false,
+                  child: Opacity(
+                    opacity: 0.5,
+                    child: Padding(
+                      padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 20),
+                      child: Text(
+                        'or Register with:',
+                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                              fontFamily: 'Manrope',
+                              letterSpacing: 0,
+                            ),
                       ),
-                      onPressed: () {},
                     ),
-                    const SizedBox(width: 45),
-                    IconButton(
-                      icon: Image.asset(
-                        "assets/images/Microsoft_icon.png",
-                        height: 30,
+                  ),
+                ),
+                Visibility(
+                  visible: false,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: Image.asset(
+                          "assets/images/Google_Logo.png",
+                          height: 30,
+                        ),
+                        onPressed: () {},
                       ),
-                      onPressed: () {
-                        print('IconButton pressed ...');
-                      },
-                    ),
-                  ],
+                      const SizedBox(width: 45),
+                      IconButton(
+                        icon: Image.asset(
+                          "assets/images/Microsoft_icon.png",
+                          height: 30,
+                        ),
+                        onPressed: () {
+                          print('IconButton pressed ...');
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

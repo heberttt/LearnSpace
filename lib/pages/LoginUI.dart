@@ -366,12 +366,14 @@ class _LoginUIWidgetState extends State<LoginUIWidget> {
                               alignment: const AlignmentDirectional(0, 0),
                               child: FFButtonWidget(
                                 onPressed: () {
-                                  String enteredEmail =
-                                      _model.textController1.text;
-                                  String enteredPassword =
-                                      _model.textController2.text;
+
+                                  _signInWithEmail("robotest@gmail.com", "robotest");
+                                  // String enteredEmail =
+                                  //     _model.textController1.text;
+                                  // String enteredPassword =
+                                  //     _model.textController2.text;
                 
-                                  _signInWithEmail(enteredEmail, enteredPassword);
+                                  // _signInWithEmail(enteredEmail, enteredPassword);
                                 },
                                 text: _signInStatus(),
                                 options: FFButtonOptions(
