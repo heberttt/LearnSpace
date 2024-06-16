@@ -25,7 +25,7 @@ runApp(
           options: DefaultFirebaseOptions.currentPlatform),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          return AuthWrapper(); // Ends the if block for connectionState done
+          return AuthWrapper(); 
         }
 
         if (snapshot.hasError) {
@@ -33,14 +33,14 @@ runApp(
             body: Center(
               child: Text('Error initializing Firebase: ${snapshot.error}'),
             ),
-          ); // Ends the if block for hasError
+          ); 
         }
 
         return Scaffold(
           body: Center(
             child: CircularProgressIndicator(),
           ),
-        ); // Ends the default case
+        ); 
       },
     ),
   ),

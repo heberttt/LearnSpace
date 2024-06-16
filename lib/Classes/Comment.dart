@@ -64,9 +64,7 @@ class Comment {
         .collection("answers")
         .doc(answerID);
 
-    // Reference to the sub-collection
     CollectionReference subCollectionRef = mainDocRef.collection("comments");
-    // Adding data to the sub-collection
     await subCollectionRef.add(data);
   }
 }

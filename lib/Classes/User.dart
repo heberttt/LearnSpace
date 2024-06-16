@@ -22,8 +22,8 @@ class LearnSpaceUser {
     final db = FirebaseFirestore.instance;
     final storageRef = FirebaseStorage.instance.ref();
     try {
-      final profilePictureURLRef = db.collection("users").doc(id);
-      await profilePictureURLRef.update({"point": "$point"}).then(
+      final userURLRef = db.collection("users").doc(id);
+      await userURLRef.update({"point": "$point"}).then(
           (value) => print("DocumentSnapshot successfully updated!"),
           onError: (e) => print("Error updating document $e"));
     } catch (e) {
@@ -36,8 +36,8 @@ class LearnSpaceUser {
     final db = FirebaseFirestore.instance;
     final storageRef = FirebaseStorage.instance.ref();
     try {
-      final profilePictureURLRef = db.collection("users").doc(id);
-      await profilePictureURLRef.update({"point": "$point"}).then(
+      final userURLRef = db.collection("users").doc(id);
+      await userURLRef.update({"point": "$point"}).then(
           (value) => print("DocumentSnapshot successfully updated!"),
           onError: (e) => print("Error updating document $e"));
     } catch (e) {

@@ -55,13 +55,11 @@ class Voucher {
 
   Future<int> getFreeVoucherAmount() async {
     try {
-      // Reference to your Firestore collection
       CollectionReference collectionRef = FirebaseFirestore.instance
           .collection('vouchers')
           .doc(voucherID)
           .collection('voucherCodes');
 
-      // Fetch all documents in the collection
       QuerySnapshot querySnapshot =
           await collectionRef.where('isPurchased', isEqualTo: false).get();
 
@@ -77,7 +75,6 @@ class Voucher {
     List<String> voucherCodes = [];
 
     try {
-      print(voucherID);
       CollectionReference collectionRef = FirebaseFirestore.instance
           .collection('vouchers')
           .doc(voucherID)
@@ -110,7 +107,6 @@ class Voucher {
     // // Adding data to the sub-collection
     // await subCollectionRef.doc("I9sOkyqvCYVnP3mAHmzL").set(data);
 
-    print(voucherCodes[0]);
     await db
         .collection('users')
         .doc(buyer.id)
