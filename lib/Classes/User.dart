@@ -58,7 +58,6 @@ class LearnSpaceUser {
   }
 
   Future<void> getOtherInfoFromUID() async {
-    final ref = FirebaseDatabase.instance.ref();
 
     DocumentSnapshot userDoc =
         await FirebaseFirestore.instance.collection('users').doc(id).get();

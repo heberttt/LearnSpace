@@ -44,7 +44,7 @@ class MyStates with ChangeNotifier {
   }
 
   void minusPointCurrentUser(int point) {
-    currentUser.point -= point;
+    //currentUser.point -= point;
     currentUser.minusPoint(point); 
     notifyListeners();
   }
