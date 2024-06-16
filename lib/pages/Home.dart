@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:learnspace/Classes/Question.dart';
 import 'package:learnspace/pages/LoginUI.dart';
 import 'package:learnspace/pages/Profile.dart';
@@ -379,14 +378,11 @@ class _MainWidgetState extends State<MainWidget> with AutomaticKeepAliveClientMi
   Future<List<String>> getQuestionIDs() async {
     List<String> questionIDs = [];
     try {
-      // Reference to your Firestore collection
       CollectionReference collectionRef =
           FirebaseFirestore.instance.collection('questions');
 
-      // Fetch all documents in the collection
       QuerySnapshot querySnapshot = await collectionRef.get();
 
-      // Iterate through each document and add the document ID to the list
       for (QueryDocumentSnapshot doc in querySnapshot.docs) {
         questionIDs.add(doc.id);
       }

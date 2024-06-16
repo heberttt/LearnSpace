@@ -1,8 +1,6 @@
 import 'dart:io';
 import 'package:dart_openai/dart_openai.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:learnspace/Classes/Answer.dart';
@@ -80,12 +78,9 @@ class Question {
     chatGPTAnswer.user = chatgptUser;
     chatGPTAnswer.questionID = questionID;
 
-    for(var t in completion.choices){
-      print(t.text);
-    }
+    
     chatGPTAnswer.content = completion.choices[0].text;
 
-    print(chatGPTAnswer.content);
 
     chatGPTAnswer.uploadAnswer();
     
@@ -179,16 +174,13 @@ class Question {
   Future<List<String>> getAnswerIDs() async {
     List<String> answerIDs = [];
     try {
-      // Reference to your Firestore collection
       CollectionReference collectionRef = FirebaseFirestore.instance
           .collection('questions')
           .doc(questionID)
           .collection('answers');
 
-      // Fetch all documents in the collection
       QuerySnapshot querySnapshot = await collectionRef.get();
 
-      // Iterate through each document and add the document ID to the list
       for (QueryDocumentSnapshot doc in querySnapshot.docs) {
         answerIDs.add(doc.id);
       }

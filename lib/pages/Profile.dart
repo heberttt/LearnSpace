@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:learnspace/Classes/User.dart';
 import 'package:learnspace/pages/ChangeProfile.dart';
 import 'package:learnspace/pages/LoginUI.dart';
@@ -86,7 +85,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                         child: Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                           child: Text(
-                            widget.user.username,
+                            myStates.currentUser.username,
                             textAlign: TextAlign.center,
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium

@@ -1,12 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:learnspace/pages/CreateAccount.dart';
 import 'Home.dart';
-import '../Classes/User.dart';
 
 class LoginUIModel extends FlutterFlowModel<LoginUIWidget> {
   ///  State fields for stateful widgets in this page.

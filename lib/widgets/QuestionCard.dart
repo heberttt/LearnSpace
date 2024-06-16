@@ -1,17 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:learnspace/Classes/Answer.dart';
 import 'package:learnspace/Classes/Question.dart';
-import 'package:learnspace/pages/LoginUI.dart';
-import 'package:learnspace/pages/Profile.dart';
 import 'package:learnspace/pages/QnA.dart';
 import 'package:learnspace/states.dart';
-import 'package:learnspace/widgets/SearchBar.dart';
 import 'package:provider/provider.dart';
-import '../Classes/User.dart';
 
 class QuestionCard extends StatefulWidget {
   QuestionCard({super.key});
@@ -79,7 +72,7 @@ class _QuestionCardState extends State<QuestionCard> {
           mainAxisSize: MainAxisSize.max,
           children: [
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
+              padding: const EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -87,7 +80,7 @@ class _QuestionCardState extends State<QuestionCard> {
                   Opacity(
                     opacity: 0.5,
                     child: Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
                       child: Text(
                         widget.question.date,
                         textAlign: TextAlign.start,
@@ -112,7 +105,7 @@ class _QuestionCardState extends State<QuestionCard> {
                       width: 70,
                       height: 70,
                       clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         shape: BoxShape.circle,
                       ),
                       child: Image.network(
@@ -159,7 +152,7 @@ class _QuestionCardState extends State<QuestionCard> {
               ),
             ),
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
+              padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -194,7 +187,7 @@ class _QuestionCardState extends State<QuestionCard> {
               ),
             ),
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
+              padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -213,8 +206,8 @@ class _QuestionCardState extends State<QuestionCard> {
                     options: FFButtonOptions(
                       width: MediaQuery.sizeOf(context).width * 0.6,
                       height: 40,
-                      padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
-                      iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
+                      iconPadding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                       color: FlutterFlowTheme.of(context).primary,
                       textStyle:
                           FlutterFlowTheme.of(context).titleSmall.override(
@@ -223,7 +216,7 @@ class _QuestionCardState extends State<QuestionCard> {
                                 letterSpacing: 0,
                               ),
                       elevation: 3,
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Colors.transparent,
                         width: 1,
                       ),
@@ -235,7 +228,7 @@ class _QuestionCardState extends State<QuestionCard> {
                     height: 40,
                     decoration: BoxDecoration(
                       color: FlutterFlowTheme.of(context).secondaryBackground,
-                      borderRadius: BorderRadius.only(
+                      borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(360),
                         bottomRight: Radius.circular(360),
                         topLeft: Radius.circular(360),

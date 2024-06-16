@@ -1,10 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:learnspace/Classes/User.dart';
 
 class Comment {
@@ -31,7 +28,6 @@ class Comment {
   }
 
   Future<void> getOtherDataFromID() async {
-    final ref = FirebaseDatabase.instance.ref();
 
     DocumentSnapshot commentDoc = await FirebaseFirestore.instance
         .collection('questions')

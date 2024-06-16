@@ -3,12 +3,10 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:learnspace/Classes/User.dart';
 import 'package:learnspace/pages/LoginUI.dart';
 import 'package:learnspace/states.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 class ChangeProfileWidget extends StatefulWidget {
@@ -87,20 +85,21 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
     }
 
     
+    final myStates = Provider.of<MyStates>(context, listen: false);
 
     try {
       showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          content: CircularProgressIndicator(),
-        );
-      },
-    );
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return const AlertDialog(
+            content: CircularProgressIndicator(),
+          );
+        },
+      );
       final userCredentials = await FirebaseAuth.instance
           .signInWithEmailAndPassword(
-              email: widget.user.email, password: oldPassword);
+              email: myStates.currentUser.email, password: oldPassword);
     } catch (e) {
       Navigator.pop(context);
       showDialog(
@@ -139,7 +138,6 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
       );
     }).catchError((error) {
       print("Password can't be changed" + error.toString());
-      //This might happen, when the wrong password is in, the user isn't found, or if the user hasn't logged in recently.
     });
   }
 
@@ -149,9 +147,9 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
 
   void _reloadImage() {
     var nowParam = DateFormat('yyyyddMMHHmm').format(DateTime.now());
-    setState(() {
-      profilePictureURL = "${widget.user.profilePictureUrl}#$nowParam";
-    });
+    final myStates = Provider.of<MyStates>(context);
+    myStates.currentUser.profilePictureUrl =
+        "${widget.user.profilePictureUrl}#$nowParam";
   }
 
   @override
@@ -208,11 +206,11 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
                             width: 120,
                             height: 120,
                             clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                             ),
                             child: Image.network(
-                              profilePictureURL,
+                              myStates.currentUser.profilePictureUrl,
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -226,7 +224,7 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
                             height: 20,
                             decoration: BoxDecoration(),
                             child: Text(
-                              _currentUsername,
+                              myStates.currentUser.username,
                               textAlign: TextAlign.center,
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
@@ -237,8 +235,8 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
                             ),
                           ),
                           Padding(
-                            padding:
-                                EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                0, 10, 0, 0),
                             child: FFButtonWidget(
                               onPressed: () async {
                                 var pickedImage = await ImagePicker().pickImage(
@@ -249,16 +247,16 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
                                 if (pickedImage != null) {
                                   File pickedImageFile = File(pickedImage.path);
 
-                                  await widget.user
+                                  await myStates.currentUser
                                       .updateProfilePicture(pickedImageFile);
-                                  widget.user.getOtherInfoFromUID();
+                                  myStates.currentUser.getOtherInfoFromUID();
                                   _reloadImage();
                                 }
                               },
                               text: 'Change Picture',
                               options: FFButtonOptions(
                                 height: 20,
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24, 0, 24, 0),
                                 iconPadding:
                                     EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
@@ -272,7 +270,7 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
                                       letterSpacing: 0,
                                     ),
                                 elevation: 3,
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   color: Colors.transparent,
                                   width: 1,
                                 ),
@@ -282,15 +280,15 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
                           ),
                         ],
                       ),
-                    ].divide(SizedBox(width: 10)),
+                    ].divide(const SizedBox(width: 10)),
                   ),
                 ),
                 Container(
                   width: 1,
                   height: 50,
-                  decoration: BoxDecoration(),
+                  decoration: const BoxDecoration(),
                   child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
                     child: TextFormField(
                       controller: _model.textController1,
                       focusNode: _model.textFieldFocusNode1,
@@ -347,7 +345,7 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
                   child: TextFormField(
                     controller: _model.textController2,
                     focusNode: _model.textFieldFocusNode2,
@@ -395,7 +393,7 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       contentPadding:
-                          EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
+                          const EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
                     ),
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
                           fontFamily: 'Manrope',
@@ -406,14 +404,35 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 30, 0, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 30, 0, 0),
                   child: FFButtonWidget(
                     onPressed: () async {
                       String newname = _model.textController2.text;
-                      await widget.user.updateUsername(newname);
-                      setState(() {
-                        _currentUsername = widget.user.username;
-                      });
+                      if (newname.length < 5) {
+                        await showDialog(
+                            context: context,
+                            builder: (_) => AlertDialog(
+                                  title: const Text('Warning'),
+                                  content: const Text(
+                                    'Username is too short!',
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      style: TextButton.styleFrom(
+                                        textStyle: Theme.of(context)
+                                            .textTheme
+                                            .labelLarge,
+                                      ),
+                                      child: const Text('OK'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                ));
+                        return;
+                      }
+                      await myStates.updateUsername(newname);
                     },
                     text: 'Change username',
                     options: FFButtonOptions(
@@ -429,7 +448,7 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
                                 letterSpacing: 0,
                               ),
                       elevation: 3,
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Colors.transparent,
                         width: 1,
                       ),
@@ -438,7 +457,7 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(8, 20, 8, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(8, 20, 8, 0),
                   child: TextFormField(
                     controller: _model.textController3,
                     focusNode: _model.textFieldFocusNode3,
@@ -485,7 +504,7 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       contentPadding:
-                          EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
+                          const EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
                     ),
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
                           fontFamily: 'Manrope',
@@ -496,7 +515,7 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(8, 20, 8, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(8, 20, 8, 0),
                   child: TextFormField(
                     controller: _model.textController4,
                     focusNode: _model.textFieldFocusNode4,
@@ -543,7 +562,7 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       contentPadding:
-                          EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
+                          const EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
                     ),
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
                           fontFamily: 'Manrope',
@@ -554,7 +573,7 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 30, 0, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 30, 0, 0),
                   child: FFButtonWidget(
                     onPressed: () {
                       _changePassword(_model.textController4.text, context);
@@ -563,8 +582,10 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
                     options: FFButtonOptions(
                       width: MediaQuery.sizeOf(context).width * 0.8,
                       height: 40,
-                      padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
-                      iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                      padding:
+                          const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
+                      iconPadding:
+                          const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                       color: FlutterFlowTheme.of(context).primary,
                       textStyle:
                           FlutterFlowTheme.of(context).titleSmall.override(
@@ -573,7 +594,7 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
                                 letterSpacing: 0,
                               ),
                       elevation: 3,
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Colors.transparent,
                         width: 1,
                       ),

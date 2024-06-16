@@ -2,14 +2,7 @@ import 'dart:io';
 
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_core/firebase_core.dart';
-import '../firebase_options.dart';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 final _firebase = FirebaseAuth.instance;
@@ -39,6 +32,7 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
 
   Future<void> _createAccountWithEmail(
       String email, String username, String password) async {
+    bool successLogin = true;
     try {
       setState(() {
         _isLoggingIn = true;
@@ -55,15 +49,73 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
           .set({
         'username': username,
         'email': email,
-        'profile_picture_url': 'https://firebasestorage.googleapis.com/v0/b/learnspacefirebase.appspot.com/o/user-profile.png?alt=media&token=59e8130d-c794-4125-a83e-22a7482bd81b',
-        'role' : 'Student',
-        'point' : '0',
+        'profile_picture_url':
+            'https://firebasestorage.googleapis.com/v0/b/learnspacefirebase.appspot.com/o/user-profile.png?alt=media&token=59e8130d-c794-4125-a83e-22a7482bd81b',
+        'role': 'Student',
+        'point': '0',
       });
     } on FirebaseAuthException catch (e) {
+      successLogin = false;
       if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
+        await showDialog(
+            context: context,
+            builder: (_) => AlertDialog(
+                  title: const Text('Warning'),
+                  content: const Text(
+                    'Password is too weak!',
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        textStyle: Theme.of(context).textTheme.labelLarge,
+                      ),
+                      child: const Text('OK'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ));
       } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
+        await showDialog(
+            context: context,
+            builder: (_) => AlertDialog(
+                  title: const Text('Warning'),
+                  content: const Text(
+                    'Email is already used!',
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        textStyle: Theme.of(context).textTheme.labelLarge,
+                      ),
+                      child: const Text('OK'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ));
+      } else if (e.code == 'invalid-email') {
+        await showDialog(
+            context: context,
+            builder: (_) => AlertDialog(
+                  title: const Text('Warning'),
+                  content: const Text(
+                    'Email is invalid!',
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        textStyle: Theme.of(context).textTheme.labelLarge,
+                      ),
+                      child: const Text('OK'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ));
       }
     } catch (e) {
       print(e);
@@ -72,6 +124,12 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
     setState(() {
       _isLoggingIn = false;
     });
+
+    if (successLogin == false) {
+      return;
+    }
+
+    
 
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text('New user "$username" created '),
@@ -147,10 +205,10 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                 Container(
                   width: 100,
                   height: 40,
-                  decoration: BoxDecoration(),
+                  decoration: const BoxDecoration(),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(30, 0, 0, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(30, 0, 0, 0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -186,14 +244,14 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Expanded(
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(25, 0, 25, 0),
+                          padding: const EdgeInsetsDirectional.fromSTEB(25, 0, 25, 0),
                           child: Container(
                             width: double.infinity,
                             child: TextFormField(
@@ -244,7 +302,7 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                                   ),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                contentPadding: EdgeInsetsDirectional.fromSTEB(
+                                contentPadding: const EdgeInsetsDirectional.fromSTEB(
                                     15, 0, 15, 0),
                               ),
                               style: FlutterFlowTheme.of(context)
@@ -263,14 +321,14 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Expanded(
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(25, 0, 25, 0),
+                          padding: const EdgeInsetsDirectional.fromSTEB(25, 0, 25, 0),
                           child: Container(
                             width: double.infinity,
                             child: TextFormField(
@@ -321,7 +379,7 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                                   ),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                contentPadding: EdgeInsetsDirectional.fromSTEB(
+                                contentPadding: const EdgeInsetsDirectional.fromSTEB(
                                     15, 0, 15, 0),
                               ),
                               style: FlutterFlowTheme.of(context)
@@ -340,14 +398,14 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Expanded(
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(25, 0, 25, 0),
+                          padding: const EdgeInsetsDirectional.fromSTEB(25, 0, 25, 0),
                           child: Container(
                             width: double.infinity,
                             child: TextFormField(
@@ -398,7 +456,7 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                                   ),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                contentPadding: EdgeInsetsDirectional.fromSTEB(
+                                contentPadding: const EdgeInsetsDirectional.fromSTEB(
                                     15, 0, 15, 0),
                               ),
                               style: FlutterFlowTheme.of(context)
@@ -417,15 +475,40 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 40),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 40),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Align(
-                        alignment: AlignmentDirectional(0, 0),
+                        alignment: const AlignmentDirectional(0, 0),
                         child: FFButtonWidget(
-                          onPressed: () {
+                          onPressed: () async {
+                            if (_model.textController2.text.length < 5) {
+                              await showDialog(
+                                  context: context,
+                                  builder: (_) => AlertDialog(
+                                        title: const Text('Warning'),
+                                        content: const Text(
+                                          'Username is too short!',
+                                        ),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            style: TextButton.styleFrom(
+                                              textStyle: Theme.of(context)
+                                                  .textTheme
+                                                  .labelLarge,
+                                            ),
+                                            child: const Text('OK'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                              
+                                            },
+                                          ),
+                                        ],
+                                      ));
+                                      return;
+                            }
                             _createAccountWithEmail(
                                 _model.textController1.text,
                                 _model.textController2.text,
@@ -435,9 +518,9 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                           options: FFButtonOptions(
                             width: 300,
                             height: 40,
-                            padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                            padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                             iconPadding:
-                                EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                                const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                             color: FlutterFlowTheme.of(context).primary,
                             textStyle: FlutterFlowTheme.of(context)
                                 .titleSmall
@@ -447,7 +530,7 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                                   letterSpacing: 0,
                                 ),
                             elevation: 3,
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               color: Colors.transparent,
                               width: 1,
                             ),
@@ -468,7 +551,7 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
                 Opacity(
                   opacity: 0.5,
                   child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 20),
+                    padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 20),
                     child: Text(
                       'or Register with:',
                       style: FlutterFlowTheme.of(context).bodyMedium.override(

@@ -1,12 +1,8 @@
 import 'dart:io';
-import 'package:dart_openai/dart_openai.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:learnspace/Classes/Question.dart';
-import 'package:learnspace/Classes/User.dart';
 import 'package:learnspace/states.dart';
 import 'package:provider/provider.dart';
 

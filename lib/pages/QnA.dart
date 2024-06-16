@@ -1,11 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:learnspace/Classes/Answer.dart';
 import 'package:learnspace/Classes/Question.dart';
 import 'package:learnspace/pages/draftAnswer.dart';
-import 'package:learnspace/pages/draftPost.dart';
 import 'package:learnspace/states.dart';
 import 'package:learnspace/widgets/AnswerPiece.dart';
 import 'package:provider/provider.dart';

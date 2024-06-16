@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:learnspace/pages/draftPost.dart';
 import 'package:learnspace/states.dart';
 import 'pages/LoginUI.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -57,9 +56,9 @@ class AuthWrapper extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.active) {
           User? user = snapshot.data;
           if (user == null) {
-            return const LoginUIWidget(); // Ends the if block for user null
+            return const LoginUIWidget(); 
           } else {
-            return Home.getUser2(FirebaseAuth.instance.currentUser!.uid); // Ends the if block for user not null
+            return Home.getUser2(FirebaseAuth.instance.currentUser!.uid); 
           }
         }
 
@@ -74,9 +73,9 @@ class AuthWrapper extends StatelessWidget {
                         ),
                       ),),
           ),
-        ); // Ends the default case
+        ); 
       },
-    ); // Ends StreamBuilder
-  } // Ends the build method
-} // Ends AuthWrapper class
+    ); 
+  } 
+} 
 
