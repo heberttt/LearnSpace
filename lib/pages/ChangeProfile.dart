@@ -84,7 +84,6 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
       return;
     }
 
-    
     final myStates = Provider.of<MyStates>(context, listen: false);
 
     try {
@@ -147,9 +146,11 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
 
   void _reloadImage() {
     var nowParam = DateFormat('yyyyddMMHHmm').format(DateTime.now());
-    final myStates = Provider.of<MyStates>(context);
-    myStates.currentUser.profilePictureUrl =
-        "${widget.user.profilePictureUrl}#$nowParam";
+    final myStates = Provider.of<MyStates>(context, listen: false);
+
+    Provider.of<MyStates>(context, listen: false).changeCurrentUserProfile(
+        "${myStates.currentUser.profilePictureUrl}#$nowParam");
+
   }
 
   @override
@@ -249,7 +250,7 @@ class _ChangeProfileWidgetState extends State<ChangeProfileWidget> {
 
                                   await myStates.currentUser
                                       .updateProfilePicture(pickedImageFile);
-                                  myStates.currentUser.getOtherInfoFromUID();
+                                
                                   _reloadImage();
                                 }
                               },

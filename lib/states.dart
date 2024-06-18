@@ -2,14 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:learnspace/Classes/User.dart';
 
-
 class MyStates with ChangeNotifier {
   List<String> topics = [];
 
   LearnSpaceUser currentUser = LearnSpaceUser();
   List<String> savedQuestionIDsByCurrentUser = [];
-
- 
 
   String searchedQuestion = "";
 
@@ -45,7 +42,12 @@ class MyStates with ChangeNotifier {
 
   void minusPointCurrentUser(int point) {
     //currentUser.point -= point;
-    currentUser.minusPoint(point); 
+    currentUser.minusPoint(point);
+    notifyListeners();
+  }
+
+  void changeCurrentUserProfile(String newProfileLink) {
+    currentUser.profilePictureUrl = newProfileLink;
     notifyListeners();
   }
 
